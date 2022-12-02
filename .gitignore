@@ -2,3 +2,5 @@
 /Temp/
 /obj/
 /Logs/
+/.vs
+*.csproj

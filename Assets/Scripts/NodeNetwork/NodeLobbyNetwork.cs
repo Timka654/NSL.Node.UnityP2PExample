@@ -45,11 +45,13 @@ public class NodeLobbyNetwork
 
                 //builder.AddPacketHandle
 
-                builder.AddSendHandleForUnity((client, pid, len, stack) => {
+                builder.AddSendHandleForUnity((client, pid, len, stack) =>
+                {
                     Debug.Log($"Send {pid} to lobby client");
                 });
 
-                builder.AddReceiveHandleForUnity((client, pid, len) => {
+                builder.AddReceiveHandleForUnity((client, pid, len) =>
+                {
                     Debug.Log($"Receive {pid} from lobby client");
                 });
 
@@ -67,7 +69,7 @@ public class NodeLobbyNetwork
 
                 builder.AddExceptionHandle((ex, client) =>
                 {
-                    Debug.LogError(ex.ToString());
+                    Debug.LogError(ex.ToString()); 
                 });
 
                 builder.AddPacketHandle(ClientReceivePacketEnum.NewUserIdentity, (client, data) => { client.UID = data.ReadGuid(); Debug.Log($"New UID = {client.UID}"); });
@@ -134,7 +136,7 @@ public class NodeLobbyNetwork
 
     public async Task<bool> Send(WaitablePacketBuffer buffer, Func<InputPacketBuffer, Task> onResult, bool disposeOnSend = true)
     {
-        if (lobbyNetworkClient?.GetState(true) != true )
+        if (lobbyNetworkClient?.GetState(true) != true)
             return false;
 
         await lobbyNetworkClient.waitBuffer.SendWaitRequest(buffer, onResult, disposeOnSend);
@@ -159,13 +161,19 @@ public class NodeLobbyNetwork
     {
         public string Token { get; set; }
 
+        public Guid RoomId { get; set; }
+
+        public string ServerIdentity{ get; set; }
+
         public List<string> ConnectionEndPoints { get; set; }
 
         internal static RoomStartInfo Read(InputPacketBuffer data)
         {
             return new RoomStartInfo()
             {
+                RoomId = data.ReadGuid(),
                 Token = data.ReadString16(),
+                ServerIdentity = data.ReadString16(),
                 ConnectionEndPoints = data.ReadCollection(() => data.ReadString16()).ToList()
             };
         }
@@ -207,7 +215,7 @@ public class NodeLobbyNetwork
     }
 
     public class RoomJoinMemberMessageInfo
-    { 
+    {
         public Guid UserId { get; set; }
 
         internal static RoomJoinMemberMessageInfo Read(InputPacketBuffer data)

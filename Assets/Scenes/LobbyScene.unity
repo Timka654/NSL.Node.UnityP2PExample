@@ -297,6 +297,7 @@ MonoBehaviour:
   chatInput: {fileID: 1577880957}
   chatSendBtn: {fileID: 1277543047}
   chatMessagePrefab: {fileID: 1045073325328670897, guid: 6f4dbd3eb59325343b54663ac6013448, type: 3}
+  gameSceneName: GameScene
 --- !u!1 &98664286
 GameObject:
   m_ObjectHideFlags: 0
@@ -3389,7 +3390,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 784685893}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 2072631100, guid: f977c547bfbb75a4a986267be4c0c3be, type: 3}
+  m_Script: {fileID: 2072631100, guid: 01c41cf7c79305948bb85457c95d084d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!4 &784685895

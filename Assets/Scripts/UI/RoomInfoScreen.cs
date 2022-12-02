@@ -2,8 +2,10 @@ using NSL.Node.LobbyServerExample.Shared.Enums;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using static UnityEditor.ObjectChangeEventStream;
 public class RoomInfoScreen : MonoBehaviour
@@ -20,6 +22,8 @@ public class RoomInfoScreen : MonoBehaviour
     [SerializeField] private TMP_InputField chatInput;
     [SerializeField] private Button chatSendBtn;
     [SerializeField] private GameObject chatMessagePrefab;
+
+    [SerializeField] private string gameSceneName;
 
     public LobbyRoomModel CurrentRoom => roomNetworkManager.CurrentRoom;
 
@@ -99,14 +103,41 @@ public class RoomInfoScreen : MonoBehaviour
         member.GetComponent<TMP_Text>().text = $"{obj.From} - {obj.Content}";
     }
 
-    private void Network_OnRoomStartedMessage(NodeLobbyNetwork.RoomStartInfo obj)
+    private void Network_OnRoomStartedMessage(NodeLobbyNetwork.RoomStartInfo startupInfo)
     {
+        SceneManager.LoadSceneAsync(gameSceneName).completed += _ =>
+        {
+            try
+            {
 
+                var obj = FindObjectsOfType<GameRoomNetwork>().SingleOrDefault();
+
+                obj.Initialize(startupInfo);
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError(ex);
+            }
+
+            // todo : game loading
+        };
     }
 
     public void Show()
         => gameObject.SetActive(true);
 
     public void Hide()
-        => gameObject.SetActive(false);
+    {
+        if (destroyed)
+            return;
+
+        gameObject.SetActive(false);
+    }
+
+    bool destroyed = false;
+
+    private void OnDestroy()
+    {
+        destroyed = true;
+    }
 }

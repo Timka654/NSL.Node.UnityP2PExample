@@ -16,7 +16,7 @@ public class CreateRoomScreen : MonoBehaviour
     {
         SubmitButton.onClick.RemoveAllListeners();
         SubmitButton.onClick.AddListener(OnClickSubmit);
-        
+
     }
 
     async void OnClickSubmit()
@@ -49,5 +49,17 @@ public class CreateRoomScreen : MonoBehaviour
         => gameObject.SetActive(true);
 
     public void Hide()
-        => gameObject.SetActive(false);
+    {
+        if (destroyed)
+            return;
+
+        gameObject.SetActive(false);
+    }
+
+    bool destroyed = false;
+
+    private void OnDestroy()
+    {
+        destroyed = true;
+    }
 }

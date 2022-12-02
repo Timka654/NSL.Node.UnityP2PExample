@@ -60,6 +60,9 @@ public class ListRoomScreen : MonoBehaviour
 
     private ListRoomInfoModel CreateItem(LobbyRoomModel room)
     {
+        if (destroyed)
+            return default;
+
         var result = new ListRoomInfoModel()
         {
             Room = room,
@@ -75,6 +78,9 @@ public class ListRoomScreen : MonoBehaviour
 
     public async void Show()
     {
+        if (destroyed)
+            return;
+
         gameObject.SetActive(true);
 
         if (await roomNetworkManager.ConnectToLobby())
@@ -83,6 +89,13 @@ public class ListRoomScreen : MonoBehaviour
 
     public void Hide()
         => gameObject.SetActive(false);
+
+    bool destroyed = false;
+
+    private void OnDestroy()
+    {
+        destroyed = true;
+    }
 }
 
 class ListRoomInfoModel
