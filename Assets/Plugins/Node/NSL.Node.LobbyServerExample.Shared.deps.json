@@ -7,7 +7,7 @@
   "targets": {
     ".NETStandard,Version=v2.0": {},
     ".NETStandard,Version=v2.0/": {
-      "NSL.Node.LobbyServerExample.Shared/2022.10.31.2303": {
+      "NSL.Node.LobbyServerExample.Shared/2022.12.04.1657": {
         "dependencies": {
           "NETStandard.Library": "2.0.3"
         },
@@ -24,7 +24,7 @@
     }
   },
   "libraries": {
-    "NSL.Node.LobbyServerExample.Shared/2022.10.31.2303": {
+    "NSL.Node.LobbyServerExample.Shared/2022.12.04.1657": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

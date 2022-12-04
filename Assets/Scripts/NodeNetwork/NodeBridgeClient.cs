@@ -12,9 +12,9 @@ using System.Net;
 using System.Threading.Tasks;
 using UnityEngine;
 
-public class NodeBridgeClient
+public class NodeBridgeClient : IDisposable
 {
-    public delegate void OnReceiveSignSessionResultDelegate(bool result, Uri from, IEnumerable<TransportSessionInfo> servers);
+    public delegate void OnReceiveSignSessionResultDelegate(bool result, NodeBridgeClient instance, Uri from, IEnumerable<TransportSessionInfo> servers);
 
     private readonly IEnumerable<Uri> wssUrls;
 
@@ -109,17 +109,25 @@ public class NodeBridgeClient
 
     private void OnSignSessionReceive(BridgeNetworkClient client, InputPacketBuffer data)
     {
-        if (OnAvailableBridgeServersResult != null)
-        {
-            var result = data.ReadBool();
+        var result = data.ReadBool();
 
-            var sessions = result ? data.ReadCollection(() => new TransportSessionInfo(data.ReadString16(), data.ReadGuid())) : null;
+        var sessions = result ? data.ReadCollection(() => new TransportSessionInfo(data.ReadString16(), data.ReadGuid())) : null;
 
-            OnAvailableBridgeServersResult(result, client.Url, sessions);
-        }
+        OnAvailableBridgeServersResult(result, this, client.Url, sessions);
     }
 
-    public OnReceiveSignSessionResultDelegate OnAvailableBridgeServersResult = (result, from, servers) => { };
+    public void Dispose()
+    {
+        foreach (var item in connections)
+        {
+            if (item.Value.GetState())
+                item.Value.Disconnect();
+        }
+
+        connections.Clear();
+    }
+
+    public OnReceiveSignSessionResultDelegate OnAvailableBridgeServersResult = (result, instance, from, servers) => { };
 
     public class TransportSessionInfo
     {

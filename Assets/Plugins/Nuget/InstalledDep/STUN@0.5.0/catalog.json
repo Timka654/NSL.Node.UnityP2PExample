@@ -1,0 +1,74 @@
+{
+  "InstalledVersionCatalog": {
+    "@id": "https://api.nuget.org/v3/catalog0/data/2018.09.14.11.10.13/stun.0.5.0.json",
+    "Authors": "Moien007",
+    "DependencyGroups": [
+      {
+        "@id": "https://api.nuget.org/v3/catalog0/data/2018.09.14.11.10.13/stun.0.5.0.json#dependencygroup/.netframework4.5",
+        "TargetFramework": ".NETFramework4.5",
+        "Dependencies": null
+      },
+      {
+        "@id": "https://api.nuget.org/v3/catalog0/data/2018.09.14.11.10.13/stun.0.5.0.json#dependencygroup/.netstandard1.3",
+        "TargetFramework": ".NETStandard1.3",
+        "Dependencies": [
+          {
+            "@id": "https://api.nuget.org/v3/catalog0/data/2018.09.14.11.10.13/stun.0.5.0.json#dependencygroup/.netstandard1.3/netstandard.library",
+            "id": "NETStandard.Library",
+            "Range": "[1.6.1, )",
+            "Registration": "https://api.nuget.org/v3/registration5-semver1/netstandard.library/index.json"
+          },
+          {
+            "@id": "https://api.nuget.org/v3/catalog0/data/2018.09.14.11.10.13/stun.0.5.0.json#dependencygroup/.netstandard1.3/system.net.nameresolution",
+            "id": "System.Net.NameResolution",
+            "Range": "[4.3.0, )",
+            "Registration": "https://api.nuget.org/v3/registration5-semver1/system.net.nameresolution/index.json"
+          }
+        ]
+      },
+      {
+        "@id": "https://api.nuget.org/v3/catalog0/data/2018.09.14.11.10.13/stun.0.5.0.json#dependencygroup/.netstandard2.0",
+        "TargetFramework": ".NETStandard2.0",
+        "Dependencies": []
+      }
+    ],
+    "Description": "A tiny Session Traversal Utilities for NAT (STUN) client library based on deprecated RFC3489.",
+    "IconUrl": "",
+    "Id": "STUN",
+    "Launguage": null,
+    "LicenseUrl": "",
+    "Listed": true,
+    "MinClientVersion": "",
+    "packageContent": "https://api.nuget.org/v3-flatcontainer/stun/0.5.0/stun.0.5.0.nupkg",
+    "ProjectUrl": "https://github.com/moien007/stun",
+    "Published": "2018-09-14T14:05:59.757+03:00",
+    "RequireLicenseAcceptance": false,
+    "Summary": "",
+    "Tags": [
+      ""
+    ],
+    "Title": "",
+    "Version": "0.5.0",
+    "Vulnerabilities": null
+  },
+  "SelectedFrameworkDeps": {
+    "@id": "https://api.nuget.org/v3/catalog0/data/2018.09.14.11.10.13/stun.0.5.0.json#dependencygroup/.netstandard2.0",
+    "TargetFramework": ".NETStandard2.0",
+    "Dependencies": []
+  },
+  "SelectedVersion": {
+    "Version": "0.5.0.0",
+    "IsLegacyVersion": false,
+    "Revision": 0,
+    "IsSemVer2": false,
+    "OriginalVersion": "0.5.0",
+    "Major": 0,
+    "Minor": 5,
+    "Patch": 0,
+    "ReleaseLabels": [],
+    "Release": "",
+    "IsPrerelease": false,
+    "HasMetadata": false,
+    "Metadata": ""
+  }
+}
