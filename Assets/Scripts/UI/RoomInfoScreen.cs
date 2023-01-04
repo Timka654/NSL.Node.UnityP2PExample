@@ -73,7 +73,7 @@ public class RoomInfoScreen : MonoBehaviour
         await roomNetworkManager.LeaveRoom();
     }
 
-    private void Network_OnLobbyRemoveRoomMessage(System.Guid obj)
+    private void Network_OnLobbyRemoveRoomMessage(Guid obj)
     {
         if (obj.Equals(CurrentRoom.Id))
             roomNetworkManager.OpenListRoomScreen();
@@ -110,7 +110,7 @@ public class RoomInfoScreen : MonoBehaviour
             try
             {
 
-                var obj = FindObjectsOfType<GameRoomNetwork>().SingleOrDefault();
+                var obj = FindObjectsOfType<NodeNetwork>().SingleOrDefault();
 
                 obj.Initialize(startupInfo);
             }

@@ -69,7 +69,7 @@ public class NodeLobbyNetwork
 
                 builder.AddExceptionHandle((ex, client) =>
                 {
-                    Debug.LogError(ex.ToString()); 
+                    Debug.LogError(ex.ToString());
                 });
 
                 builder.AddPacketHandle(ClientReceivePacketEnum.NewUserIdentity, (client, data) => { client.UID = data.ReadGuid(); Debug.Log($"New UID = {client.UID}"); });
@@ -163,9 +163,11 @@ public class NodeLobbyNetwork
 
         public Guid RoomId { get; set; }
 
-        public string ServerIdentity{ get; set; }
+        public string ServerIdentity { get; set; }
 
         public List<string> ConnectionEndPoints { get; set; }
+
+        public int TotalPlayerCount { get; set; }
 
         internal static RoomStartInfo Read(InputPacketBuffer data)
         {
@@ -174,7 +176,8 @@ public class NodeLobbyNetwork
                 RoomId = data.ReadGuid(),
                 Token = data.ReadString16(),
                 ServerIdentity = data.ReadString16(),
-                ConnectionEndPoints = data.ReadCollection(() => data.ReadString16()).ToList()
+                ConnectionEndPoints = data.ReadCollection(() => data.ReadString16()).ToList(),
+                TotalPlayerCount = data.ReadInt32()
             };
         }
     }

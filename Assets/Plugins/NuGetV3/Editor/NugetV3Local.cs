@@ -1,30 +1,20 @@
 ﻿#if UNITY_EDITOR
 
-using Codice.Client.BaseCommands.BranchExplorer;
 using NU.Core;
 using NU.Core.Models.Response;
 using NuGet.Versioning;
-using NuGetV3;
 using NuGetV3.Data;
 using NuGetV3.Utils.Exceptions;
-using PlasticPipe.PlasticProtocol.Server.Stubs;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.ServiceModel.Channels;
-using System.Text;
-using System.Text.Encodings.Web;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using UnityEditor;
-using UnityEditor.Sprites;
 using UnityEngine;
 using NUtils = NuGetV3.NugetV3Utils;
 

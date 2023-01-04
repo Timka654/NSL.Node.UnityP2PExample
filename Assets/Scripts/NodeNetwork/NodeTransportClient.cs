@@ -2,17 +2,32 @@ using NSL.BuilderExtensions.SocketCore;
 using NSL.BuilderExtensions.WebSocketsClient;
 using NSL.Node.BridgeServer.Shared.Enums;
 using NSL.SocketClient;
+using NSL.SocketCore.Extensions.Buffer;
 using NSL.SocketCore.Utils.Buffer;
 using NSL.WebSockets.Client;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using Unity.VisualScripting;
 using UnityEngine;
-
+public enum NodeTransportPacketEnum
+{
+    SignSession = 1,
+    SignSessionResult = SignSession,
+    ChangeNodeList,
+    Transport,
+    Broadcast,
+    ReadyNodePID,
+    ReadyNodeResultPID = ReadyNodePID,
+    ReadyRoom
+}
 public class NodeTransportClient
 {
     public delegate void OnReceiveSignSessionResultDelegate(bool result, NodeTransportClient instance, Uri from);
+    public delegate void OnReceiveNodeListDelegate(IEnumerable<NodeConnectionInfo> nodes, NodeTransportClient instance);
+    public delegate void OnReceiveNodeTransportDelegate(Guid nodeId, InputPacketBuffer buffer);
 
     private readonly IEnumerable<Uri> wssUrls;
 
@@ -26,17 +41,54 @@ public class NodeTransportClient
 
     public NodeTransportClient(Uri wssUrl) : this(Enumerable.Repeat(wssUrl, 1).ToArray()) { }
 
-    public int Connect(Guid playerIdentity, string sessionIdentity, string endPoint, int connectionTimeout = 2000)
+    public int Connect(Guid nodeIdentity, string sessionIdentity, string endPoint, int connectionTimeout = 2000)
     {
         var serverCount = tryConnect(connectionTimeout);
 
         if (serverCount > 0)
         {
-            if (trySign(playerIdentity, sessionIdentity, endPoint))
+            if (trySign(nodeIdentity, sessionIdentity, endPoint))
                 return serverCount;
         }
 
         return 0;
+    }
+
+
+    public async Task<bool> SendReady(int totalCount, IEnumerable<Guid> readyNodes)
+    {
+        var p = WaitablePacketBuffer.Create(/*NodeBridgeClientPacketEnum.Ready*/ (NodeTransportPacketEnum)5);
+
+        p.WriteInt32(totalCount);
+        p.WriteCollection(readyNodes, i => p.WriteGuid(i));
+
+        bool state = false;
+
+        foreach (var item in connections)
+        {
+            await item.Value.Data.PacketWaitBuffer.SendWaitRequest(p, data =>
+            {
+                state = data.ReadBool();
+
+                return Task.CompletedTask;
+            });
+
+            if (!state)
+                return state;
+        }
+
+        return state;
+    }
+
+    public void Transport(OutputPacketBuffer packet)
+    {
+        foreach (var item in connections)
+        {
+            if (!item.Value.GetState())
+                continue;
+
+            item.Value.Send(packet, false);
+        }
     }
 
     private int tryConnect(int connectionTimeout)
@@ -58,6 +110,10 @@ public class NodeTransportClient
                 {
                     builder.AddConnectHandle(client => client.Url = uri);
                     builder.AddPacketHandle(NodeTransportPacketEnum.SignSessionResult, OnSignSessionReceive);
+                    builder.AddPacketHandle(NodeTransportPacketEnum.ChangeNodeList, OnChangeNodeListReceive);
+                    builder.AddPacketHandle(NodeTransportPacketEnum.Transport, OnTransportReceive);
+                    builder.AddReceivePacketHandle(NodeTransportPacketEnum.ReadyNodeResultPID, c => c.PacketWaitBuffer);
+                    builder.AddPacketHandle(NodeTransportPacketEnum.ReadyRoom, OnRoomReadyReceive);
                 })
                 .WithUrl(uri)
                 .Build());
@@ -77,12 +133,12 @@ public class NodeTransportClient
         return count;
     }
 
-    private bool trySign(Guid playerIdentity, string sessionIdentity, string endPoint)
+    private bool trySign(Guid nodeIdentity, string sessionIdentity, string endPoint)
     {
         var packet = OutputPacketBuffer.Create(NodeTransportPacketEnum.SignSession);
 
         packet.WriteString16(sessionIdentity);
-        packet.WriteGuid(playerIdentity);
+        packet.WriteGuid(nodeIdentity);
         packet.WriteString16(endPoint);
 
         bool any = false;
@@ -102,35 +158,70 @@ public class NodeTransportClient
         return any;
     }
 
+    private void OnTransportReceive(TransportNetworkClient client, InputPacketBuffer data)
+    {
+        var len = (int)(data.Lenght - data.Position);
+
+        var packet = new InputPacketBuffer(data.Read(len));
+
+        OnTransport(data.ReadGuid(), packet);
+    }
+
+    private void OnChangeNodeListReceive(TransportNetworkClient client, InputPacketBuffer data)
+    {
+        OnChangeNodeList(data.ReadCollection(() => new NodeConnectionInfo(data.ReadGuid(), data.ReadString16(), data.ReadString16())), this);
+    }
+
     private void OnSignSessionReceive(TransportNetworkClient client, InputPacketBuffer data)
     {
         var result = data.ReadBool();
 
-        if(result)
-        {
-
-        }
-
         OnSignOnServerResult(result, this, client.Url);
     }
 
-    public OnReceiveSignSessionResultDelegate OnSignOnServerResult = (result, instance, from) => { };
-
-    public class TransportSessionInfo
+    private void OnRoomReadyReceive(TransportNetworkClient client, InputPacketBuffer data)
     {
-        public TransportSessionInfo(string connectionUrl, Guid id)
-        {
-            ConnectionUrl = connectionUrl;
-            Id = id;
-        }
-
-        public string ConnectionUrl { get; }
-
-        public Guid Id { get; }
+        OnRoomAllNodesReady();
     }
+
+    public OnReceiveSignSessionResultDelegate OnSignOnServerResult = (result, instance, from) => { };
+    public OnReceiveNodeListDelegate OnChangeNodeList = (data, transportClient) => { };
+    public event OnReceiveNodeTransportDelegate OnTransport = (nodeId, buffer) => { };
+
+    public event Action OnRoomAllNodesReady = () => { };
 
     private class TransportNetworkClient : BaseSocketNetworkClient
     {
         public Uri Url { get; set; }
+
+        public PacketWaitBuffer PacketWaitBuffer { get; }
+
+        public TransportNetworkClient()
+        {
+            PacketWaitBuffer = new PacketWaitBuffer(this);
+        }
+
+        public override void Dispose()
+        {
+            PacketWaitBuffer.Dispose();
+
+            base.Dispose();
+        }
+    }
+
+    public class NodeConnectionInfo
+    {
+        public Guid NodeId { get; }
+
+        public string EndPoint { get; }
+
+        public string Token { get; }
+
+        public NodeConnectionInfo(Guid nodeId, string token, string endPoint)
+        {
+            this.NodeId = nodeId;
+            this.EndPoint = endPoint;
+            Token = token;
+        }
     }
 }

@@ -1,19 +1,11 @@
 #if UNITY_EDITOR
 
-using NU.Core.Models.Response;
 using NuGet.Versioning;
 using NuGetV3.Data;
 using NuGetV3.Utils;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Text.Encodings.Web;
-using System.Text.Json;
-using System.Threading;
-using System.Threading.Tasks;
 using UnityEditor;
 using UnityEngine;
 

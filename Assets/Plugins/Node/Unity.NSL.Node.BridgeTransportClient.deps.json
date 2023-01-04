@@ -7,12 +7,12 @@
   "targets": {
     ".NETStandard,Version=v2.1": {},
     ".NETStandard,Version=v2.1/": {
-      "Unity.NSL.Node.BridgeTransportClient/2022.12.04.1657": {
+      "Unity.NSL.Node.BridgeTransportClient/2022.12.15.0422": {
         "dependencies": {
           "Unity.NSL.BuilderExtensions.SocketCore": "2022.12.2.526",
           "Unity.NSL.BuilderExtensions.WebSocketsClient": "2022.12.2.526",
           "Unity.NSL.BuilderExtensions.WebSocketsServer": "2022.12.2.526",
-          "Unity.NSL.Node.BridgeServer.Shared": "2022.12.4.1657"
+          "Unity.NSL.Node.BridgeServer.Shared": "2022.12.15.422"
         },
         "runtime": {
           "Unity.NSL.Node.BridgeTransportClient.dll": {}
@@ -189,7 +189,7 @@
           }
         }
       },
-      "Unity.NSL.Node.BridgeServer.Shared/2022.12.4.1657": {
+      "Unity.NSL.Node.BridgeServer.Shared/2022.12.15.422": {
         "runtime": {
           "Unity.NSL.Node.BridgeServer.Shared.dll": {}
         }
@@ -197,7 +197,7 @@
     }
   },
   "libraries": {
-    "Unity.NSL.Node.BridgeTransportClient/2022.12.04.1657": {
+    "Unity.NSL.Node.BridgeTransportClient/2022.12.15.0422": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
@@ -307,7 +307,7 @@
       "path": "unity.nsl.websockets.server/2022.12.2.526",
       "hashPath": "unity.nsl.websockets.server.2022.12.2.526.nupkg.sha512"
     },
-    "Unity.NSL.Node.BridgeServer.Shared/2022.12.4.1657": {
+    "Unity.NSL.Node.BridgeServer.Shared/2022.12.15.422": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

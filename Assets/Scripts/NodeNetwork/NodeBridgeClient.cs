@@ -2,6 +2,7 @@ using NSL.BuilderExtensions.SocketCore;
 using NSL.BuilderExtensions.WebSocketsClient;
 using NSL.Node.BridgeServer.Shared.Enums;
 using NSL.SocketClient;
+using NSL.SocketCore.Extensions.Buffer;
 using NSL.SocketCore.Utils.Buffer;
 using NSL.WebSockets.Client;
 using System;
@@ -145,5 +146,19 @@ public class NodeBridgeClient : IDisposable
     private class BridgeNetworkClient : BaseSocketNetworkClient
     {
         public Uri Url { get; set; }
+
+        //public PacketWaitBuffer PacketWaitBuffer { get; }
+
+        //public BridgeNetworkClient()
+        //{
+        //    PacketWaitBuffer = new PacketWaitBuffer(this);
+        //}
+
+        //public override void Dispose()
+        //{
+        //    PacketWaitBuffer.Dispose();
+
+        //    base.Dispose();
+        //}
     }
 }
