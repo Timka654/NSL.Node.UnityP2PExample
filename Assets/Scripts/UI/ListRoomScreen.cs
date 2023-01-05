@@ -84,7 +84,16 @@ public class ListRoomScreen : MonoBehaviour
         gameObject.SetActive(true);
 
         if (await roomNetworkManager.ConnectToLobby())
-            rooms = (await roomNetworkManager.GetRoomList()).Select(item => CreateItem(item)).ToList();
+        {
+            var roomList = await roomNetworkManager.GetRoomList();
+
+            foreach (GameObject item in StackPanel.transform)
+            {
+                Destroy(item);
+            }
+
+            rooms = roomList.Select(item => CreateItem(item)).ToList();
+        }
     }
 
     public void Hide()

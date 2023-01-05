@@ -225,7 +225,7 @@ public class NodeNetwork : MonoBehaviour
 
         await Task.Delay(500, cancellationToken);
 
-        if (await transportClient.SendReady(roomStartInfo.TotalPlayerCount, connectedClients.Select(x => x.Key)) || MaxNodesWaitCycle == 0)
+        if (await transportClient.SendReady(roomStartInfo.TotalPlayerCount, connectedClients.Select(x => x.Key).Append(LocalNodeId)) || MaxNodesWaitCycle == 0)
             OnChangeRoomState(RoomStateEnum.Ready);
     }
 
