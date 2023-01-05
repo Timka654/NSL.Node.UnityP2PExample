@@ -53,6 +53,18 @@ public class RoomInfoScreen : MonoBehaviour
         RoomNameText.text = CurrentRoom?.Name ?? "";
 
         YouUIDText.text = $"You ID is {roomNetworkManager.GetNetwork().GetClientUID()}";
+
+        foreach (Transform item in membersLayout.gameObject.transform)
+        {
+            Destroy(item.gameObject);
+        }
+
+        foreach (var item in CurrentRoom.Members)
+        {
+            var member = GameObject.Instantiate(roomMemberPrefab, membersLayout.gameObject.transform);
+
+            member.GetComponent<MemberItem>().Set(item.ToString());
+        }
     }
 
     private void OnChatSendBtnClick()

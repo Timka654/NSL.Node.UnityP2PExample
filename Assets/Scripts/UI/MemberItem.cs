@@ -5,15 +5,14 @@ using UnityEngine;
 
 public class MemberItem : MonoBehaviour
 {
-    private TMP_Text text;
-
-    private void Start()
-    {
-        text = GetComponent<TMP_Text>();
-    }
+    [SerializeField]private TMP_Text text;
 
     public void Set(NodeLobbyNetwork.RoomJoinMemberMessageInfo data)
     {
-        text.text = data.UserId.ToString();
+        Set(data.UserId.ToString());
+    }
+    public void Set(string name)
+    {
+        text.text = name;
     }
 }
