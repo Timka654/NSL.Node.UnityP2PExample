@@ -83,9 +83,9 @@ public class ListRoomScreen : MonoBehaviour
 
         gameObject.SetActive(true);
 
-        foreach (GameObject item in StackPanel.transform)
+        foreach (Transform item in StackPanel.transform)
         {
-            Destroy(item);
+            Destroy(item.gameObject);
         }
 
         if (await roomNetworkManager.ConnectToLobby())
