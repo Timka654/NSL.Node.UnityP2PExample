@@ -31,35 +31,18 @@ public class RoomInfoScreen : MonoBehaviour
 
     public void InitRoom()
     {
-        network.OnRoomStartedMessage -= Network_OnRoomStartedMessage;
         network.OnRoomStartedMessage += Network_OnRoomStartedMessage;
-        network.OnRoomChatMessage -= Network_OnRoomChatMessage;
         network.OnRoomChatMessage += Network_OnRoomChatMessage;
-        network.OnRoomJoinMemberMessage -= Network_OnRoomJoinMemberMessage;
         network.OnRoomJoinMemberMessage += Network_OnRoomJoinMemberMessage;
-        network.OnRoomLeaveMemberMessage -= Network_OnRoomLeaveMemberMessage;
         network.OnRoomLeaveMemberMessage += Network_OnRoomLeaveMemberMessage;
-        network.OnLobbyRemoveRoomMessage -= Network_OnLobbyRemoveRoomMessage;
         network.OnLobbyRemoveRoomMessage += Network_OnLobbyRemoveRoomMessage;
 
-        startBtn.onClick.RemoveAllListeners();
         startBtn.onClick.AddListener(OnStartBtnClick);
-        backBtn.onClick.RemoveAllListeners();
         backBtn.onClick.AddListener(OnBackBtnClick);
-
-        chatSendBtn.onClick.RemoveAllListeners();
         chatSendBtn.onClick.AddListener(OnChatSendBtnClick);
 
         RoomNameText.text = CurrentRoom?.Name ?? "";
-
         YouUIDText.text = $"You ID is {roomNetworkManager.GetNetwork().GetClientUID()}";
-
-        foreach (var item in members.Values)
-        {
-            Destroy(item);
-        }
-
-        members.Clear();
 
         foreach (var item in CurrentRoom.Members)
         {
@@ -106,7 +89,6 @@ public class RoomInfoScreen : MonoBehaviour
 
     private void joinMember(Guid uid, string name)
     {
-
         var member = GameObject.Instantiate(roomMemberPrefab, membersLayout.gameObject.transform);
 
         member.GetComponent<MemberItem>().Set(name);
@@ -147,6 +129,28 @@ public class RoomInfoScreen : MonoBehaviour
     {
         if (destroyed)
             return;
+
+        network.OnRoomStartedMessage -= Network_OnRoomStartedMessage;
+        network.OnRoomChatMessage -= Network_OnRoomChatMessage;
+        network.OnRoomJoinMemberMessage -= Network_OnRoomJoinMemberMessage;
+        network.OnRoomLeaveMemberMessage -= Network_OnRoomLeaveMemberMessage;
+        network.OnLobbyRemoveRoomMessage -= Network_OnLobbyRemoveRoomMessage;
+
+        startBtn.onClick.RemoveAllListeners();
+        backBtn.onClick.RemoveAllListeners();
+        chatSendBtn.onClick.RemoveAllListeners();
+
+        foreach (Transform item in membersLayout.gameObject.transform)
+        {
+            Destroy(item.gameObject);
+        }
+
+        foreach (Transform item in chatLayout.gameObject.transform)
+        {
+            Destroy(item.gameObject);
+        }
+
+        members.Clear();
 
         gameObject.SetActive(false);
     }
