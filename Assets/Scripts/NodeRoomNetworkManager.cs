@@ -105,6 +105,10 @@ public class NodeRoomNetworkManager : MonoBehaviour
                     Members = input.ReadCollection(() => input.ReadGuid()).ToList()
                 };
             }
+            else
+            {
+                Debug.LogError($"Cannot connect to room, status -> {result}");
+            }
 
             return Task.CompletedTask;
         });
