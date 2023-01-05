@@ -29,8 +29,10 @@ public class NodeRoomNetworkManager : MonoBehaviour
     public async Task<bool> ConnectToLobby()
     {
         if (!lobby.State)
+        {
+            lobby.Disconnect(); // for death connection of ping alive
             await lobby.Connect();
-
+        }
         return true;
     }
 
@@ -179,5 +181,7 @@ public class NodeRoomNetworkManager : MonoBehaviour
         CreateRoomScreen.Hide();
 
         RoomInfoScreen.Show();
+        RoomInfoScreen.InitRoom();
+
     }
 }

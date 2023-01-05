@@ -29,7 +29,7 @@ public class RoomInfoScreen : MonoBehaviour
 
     private NodeLobbyNetwork network => roomNetworkManager.GetNetwork();
 
-    private void Start()
+    public void InitRoom()
     {
         network.OnRoomStartedMessage -= Network_OnRoomStartedMessage;
         network.OnRoomStartedMessage += Network_OnRoomStartedMessage;
@@ -54,16 +54,16 @@ public class RoomInfoScreen : MonoBehaviour
 
         YouUIDText.text = $"You ID is {roomNetworkManager.GetNetwork().GetClientUID()}";
 
-        foreach (Transform item in membersLayout.gameObject.transform)
+        foreach (var item in members.Values)
         {
-            Destroy(item.gameObject);
+            Destroy(item);
         }
+
+        members.Clear();
 
         foreach (var item in CurrentRoom.Members)
         {
-            var member = GameObject.Instantiate(roomMemberPrefab, membersLayout.gameObject.transform);
-
-            member.GetComponent<MemberItem>().Set(item.ToString());
+            joinMember(item, item.ToString());
         }
     }
 
@@ -87,7 +87,7 @@ public class RoomInfoScreen : MonoBehaviour
 
     private void Network_OnLobbyRemoveRoomMessage(Guid obj)
     {
-        if (obj.Equals(CurrentRoom.Id))
+        if (obj.Equals(CurrentRoom?.Id))
             roomNetworkManager.OpenListRoomScreen();
     }
 
@@ -101,11 +101,16 @@ public class RoomInfoScreen : MonoBehaviour
 
     private void Network_OnRoomJoinMemberMessage(NodeLobbyNetwork.RoomJoinMemberMessageInfo obj)
     {
+        joinMember(obj.UserId, obj.UserId.ToString());
+    }
+
+    private void joinMember(Guid uid, string name)
+    {
+
         var member = GameObject.Instantiate(roomMemberPrefab, membersLayout.gameObject.transform);
 
-        member.GetComponent<MemberItem>().Set(obj);
-
-        members.Add(obj.UserId, member);
+        member.GetComponent<MemberItem>().Set(name);
+        members.TryAdd(uid, member);
     }
 
     private void Network_OnRoomChatMessage(NodeLobbyNetwork.RoomChatMessageInfo obj)

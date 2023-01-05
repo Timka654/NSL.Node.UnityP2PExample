@@ -120,6 +120,9 @@ public class NodeLobbyNetwork
     public async Task<bool> Connect(int timeout = 3000)
         => await client.ConnectAsync(timeout);
 
+    public void Disconnect()
+        => client.Disconnect();
+
     #endregion
 
     #region Send
