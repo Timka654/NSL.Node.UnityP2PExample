@@ -227,8 +227,13 @@ public class NodeNetwork : MonoBehaviour
 
                 var nodeClient = connectedClients.GetOrAdd(item.NodeId, id => new NodeClient(item, this, instance));
 
-                if (nodeClient.State == NodeClientState.None && !nodeClient.TryConnect(item))
-                    throw new Exception($"Cannot connect");
+                if (nodeClient.State == NodeClientState.None)
+                {
+                    nodeClient.RegisterHandle(11, (node, buffer) => { Debug.Log($"receive {buffer.ReadFloat()} from {node.PlayerId}"); });
+
+                    if (!nodeClient.TryConnect(item))
+                        throw new Exception($"Cannot connect");
+                }
             }
 
             OnChangeNodesReady(data.Count(), roomStartInfo.TotalPlayerCount);
