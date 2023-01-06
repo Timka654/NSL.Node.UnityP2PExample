@@ -13,6 +13,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Unity.VisualScripting;
 using UnityEngine;
+//todo: replace for library
 public enum NodeTransportPacketEnum
 {
     SignSession = 1,
@@ -58,7 +59,7 @@ public class NodeTransportClient
 
     public async Task<bool> SendReady(int totalCount, IEnumerable<Guid> readyNodes)
     {
-        var p = WaitablePacketBuffer.Create(/*NodeBridgeClientPacketEnum.Ready*/ (NodeTransportPacketEnum)5);
+        var p = WaitablePacketBuffer.Create(NodeTransportPacketEnum.ReadyNodePID);
 
         p.WriteInt32(totalCount);
         p.WriteCollection(readyNodes, i => p.WriteGuid(i));
@@ -186,6 +187,9 @@ public class NodeTransportClient
     private void OnSignSessionReceive(TransportNetworkClient client, InputPacketBuffer data)
     {
         var result = data.ReadBool();
+
+        if (result)
+            client.RequestServerTimeOffset();
 
         OnSignOnServerResult(result, this, client.Url);
     }
