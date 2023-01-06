@@ -61,6 +61,8 @@ public class NodeNetwork : MonoBehaviour
     /// </summary>
     public int WaitBridgeDelayMS = 3000;
 
+    private bool ready;
+
     public event OnChangeRoomStateDelegate OnChangeRoomState = state =>
     {
 #if DEBUG
@@ -82,7 +84,17 @@ public class NodeNetwork : MonoBehaviour
     {
         roomStartInfo = startupInfo;
 
+        OnChangeRoomState -= OnChangeState;
+        OnChangeRoomState += OnChangeState;
+
         await TryConnectAsync(cancellationToken);
+    }
+
+    public bool Ready { get; private set; }
+
+    private void OnChangeState(RoomStateEnum state)
+    {
+        Ready = state == RoomStateEnum.Ready;
     }
 
     private async void TryConnect(CancellationToken cancellationToken = default)
@@ -173,8 +185,8 @@ public class NodeNetwork : MonoBehaviour
         endPoint.Start();
 
         if (endPoint?.StunInformation != null)
-            endPointConnectionUrl = NSLEndPoint.FromIPAddress( 
-                NSLEndPoint.Type.UDP, 
+            endPointConnectionUrl = NSLEndPoint.FromIPAddress(
+                NSLEndPoint.Type.UDP,
                 endPoint.StunInformation.PublicEndPoint.Address,
                 endPoint.StunInformation.PublicEndPoint.Port
                 ).ToString();
@@ -247,12 +259,41 @@ public class NodeNetwork : MonoBehaviour
         } while (!(await transportClient.SendReady(roomStartInfo.TotalPlayerCount, connectedClients.Select(x => x.Key).Append(LocalNodeId)) || MaxNodesWaitCycle == 0));
     }
 
-    public void Broadcast(Action<OutputPacketBuffer> builder)
+    public bool Broadcast(Action<OutputPacketBuffer> builder, ushort code)
     {
+        if (!Ready)
+            return false;
+
+        Parallel.ForEach(connectedClients, c => { c.Value.Transport(builder, code); });
+
+        //var packet = new OutputPacketBuffer().WithPid(NodeTransportPacketEnum.Broadcast);
+
+        return true;
+    }
+
+    public bool Broadcast(Action<OutputPacketBuffer> builder)
+    {
+        if (!Ready)
+            return false;
         Parallel.ForEach(connectedClients, c => { c.Value.Transport(builder); });
 
         //var packet = new OutputPacketBuffer().WithPid(NodeTransportPacketEnum.Broadcast);
+
+        return true;
     }
+
+#if DEBUG
+    private void Update()
+    {
+        if (Ready)
+        {
+            Broadcast(p =>
+            {
+                p.WriteFloat(Time.deltaTime);
+            }, 11);
+        }
+    }
+#endif
 }
 
 

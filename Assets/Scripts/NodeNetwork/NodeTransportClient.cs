@@ -202,7 +202,20 @@ public class NodeTransportClient
 
     private void OnRoomReadyReceive(TransportNetworkClient client, InputPacketBuffer data)
     {
-        OnRoomAllNodesReady(data.ReadDateTime(), client.ServerDateTimeOffset);
+        var offset = client.ServerDateTimeOffset;
+
+        if (offset < TimeSpan.Zero)
+        {
+            if (offset > TimeSpan.FromMilliseconds(-100))
+                offset = TimeSpan.Zero;
+        }
+        else
+        {
+            if (offset < TimeSpan.FromMilliseconds(100))
+                offset = TimeSpan.Zero;
+        }
+
+        OnRoomAllNodesReady(data.ReadDateTime(), offset);
     }
 
     public OnReceiveSignSessionResultDelegate OnSignOnServerResult = (result, instance, from) => { };

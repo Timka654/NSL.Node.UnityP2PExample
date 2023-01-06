@@ -134,15 +134,24 @@ public class NodeClient
         return result;
     }
 
+    public void Transport(Action<OutputPacketBuffer> build, ushort code)
+    {
+        Transport(p =>
+        {
+            p.WriteUInt16(code);
+            build(p);
+        });
+    }
+
     public void Transport(Action<OutputPacketBuffer> build)
     {
         var packet = new OutputPacketBuffer();
 
+        packet.WriteGuid(PlayerId);
+
         build(packet);
 
         packet.WithPid(NodeTransportPacketEnum.Transport);
-
-        packet.WriteGuid(PlayerId);
 
         if (networkClient != null)
             networkClient.Send(packet, false);
