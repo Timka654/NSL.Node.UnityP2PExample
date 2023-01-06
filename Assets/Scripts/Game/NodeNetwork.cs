@@ -61,8 +61,6 @@ public class NodeNetwork : MonoBehaviour
     /// </summary>
     public int WaitBridgeDelayMS = 3000;
 
-    private bool ready;
-
     public event OnChangeRoomStateDelegate OnChangeRoomState = state =>
     {
 #if DEBUG
@@ -225,6 +223,9 @@ public class NodeNetwork : MonoBehaviour
                 if (cancellationToken.IsCancellationRequested)
                     return;
 
+                if (item.NodeId == LocalNodeId)
+                    continue;
+
                 var nodeClient = connectedClients.GetOrAdd(item.NodeId, id => new NodeClient(item, this, instance));
 
                 if (nodeClient.State == NodeClientState.None)
@@ -252,17 +253,17 @@ public class NodeNetwork : MonoBehaviour
         {
             OnChangeRoomState(RoomStateEnum.WaitConnections);
 
-            for (int i = 1; i < MaxNodesWaitCycle + 1 && connectedClients.Count < roomStartInfo.TotalPlayerCount - 1; i++)
+            for (int i = 0; i < MaxNodesWaitCycle && connectedClients.Count < roomStartInfo.TotalPlayerCount - 1; i++)
             {
                 await Task.Delay(1000, cancellationToken);
 
-                OnChangeNodesReadyDelay(i, MaxNodesWaitCycle);
+                OnChangeNodesReadyDelay(i + 1, MaxNodesWaitCycle);
             }
-
-            await Task.Delay(500, cancellationToken);
 
         } while (!(await transportClient.SendReady(roomStartInfo.TotalPlayerCount, connectedClients.Select(x => x.Key).Append(LocalNodeId)) || MaxNodesWaitCycle == 0));
     }
+
+    #region Transport
 
     public bool Broadcast(Action<OutputPacketBuffer> builder, ushort code)
     {
@@ -287,7 +288,46 @@ public class NodeNetwork : MonoBehaviour
         return true;
     }
 
+    public bool SendTo(NodeClient node, Action<OutputPacketBuffer> builder, ushort code)
+    {
+        if (!Ready)
+            return false;
+
+        node.Transport(builder, code);
+
+        return true;
+    }
+
+    public bool SendTo(NodeClient node, Action<OutputPacketBuffer> builder)
+    {
+        if (!Ready)
+            return false;
+
+        node.Transport(builder);
+
+        return true;
+    }
+
+    public bool SendTo(Guid nodeId, Action<OutputPacketBuffer> builder)
+    {
+        if (connectedClients.TryGetValue(nodeId, out var node))
+            SendTo(node, builder);
+
+        return false;
+    }
+    
+    public bool SendTo(Guid nodeId, Action<OutputPacketBuffer> builder, ushort code)
+    {
+        if (connectedClients.TryGetValue(nodeId, out var node))
+            SendTo(node, builder, code);
+
+        return false;
+    }
+
+    #endregion
+
 #if DEBUG
+
     private void Update()
     {
         if (Ready)
