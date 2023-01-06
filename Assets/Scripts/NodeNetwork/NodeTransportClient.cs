@@ -178,11 +178,13 @@ public class NodeTransportClient
 
     private void OnTransportReceive(TransportNetworkClient client, InputPacketBuffer data)
     {
+        var nid = data.ReadGuid();
+
         var len = (int)(data.Lenght - data.Position);
 
         var packet = new InputPacketBuffer(data.Read(len));
 
-        OnTransport(data.ReadGuid(), packet);
+        OnTransport(nid, packet);
     }
 
     private void OnChangeNodeListReceive(TransportNetworkClient client, InputPacketBuffer data)
