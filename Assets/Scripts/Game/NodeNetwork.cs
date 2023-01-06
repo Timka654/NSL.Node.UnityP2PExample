@@ -287,9 +287,11 @@ public class NodeNetwork : MonoBehaviour
     {
         if (Ready)
         {
+            var delta = Time.deltaTime;
+
             Broadcast(p =>
             {
-                p.WriteFloat(Time.deltaTime);
+                p.WriteFloat(delta);
             }, 11);
         }
     }
