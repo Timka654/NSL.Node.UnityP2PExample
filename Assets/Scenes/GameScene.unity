@@ -133,7 +133,6 @@ GameObject:
   m_Component:
   - component: {fileID: 237288160}
   - component: {fileID: 237288161}
-  - component: {fileID: 237288162}
   - component: {fileID: 237288163}
   m_Layer: 0
   m_Name: Logic
@@ -171,18 +170,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MaxNodesWaitCycle: 10
   WaitBridgeDelayMS: 3000
---- !u!114 &237288162
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 237288159}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 2072631100, guid: 56ed6d774240e67488d3e38a2a21c179, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &237288163
 MonoBehaviour:
   m_ObjectHideFlags: 0
