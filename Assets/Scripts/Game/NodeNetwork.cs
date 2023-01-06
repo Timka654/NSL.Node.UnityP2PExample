@@ -198,6 +198,14 @@ public class NodeNetwork : MonoBehaviour
             Debug.LogError($"Cannot sign on {nameof(NodeTransportClient)}");
         };
 
+        transportClient.OnRoomAllNodesReady += (createTime, srv_offs) =>
+        {
+#if DEBUG
+            Debug.Log($"{nameof(transportClient.OnRoomAllNodesReady)} - {createTime} - {srv_offs}");
+#endif
+        };
+
+
         transportClient.OnChangeNodeList = (data, instance) =>
         {
             foreach (var item in data)

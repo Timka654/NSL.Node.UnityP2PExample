@@ -30,6 +30,7 @@ public class NodeTransportClient
     public delegate void OnReceiveSignSessionResultDelegate(bool result, NodeTransportClient instance, Uri from);
     public delegate void OnReceiveNodeListDelegate(IEnumerable<NodeConnectionInfo> nodes, NodeTransportClient instance);
     public delegate void OnReceiveNodeTransportDelegate(Guid nodeId, InputPacketBuffer buffer);
+    public delegate void OnRoomAllNodesReadyDelegate(DateTime createTime, TimeSpan serverTimeOffset);
 
     private readonly IEnumerable<Uri> wssUrls;
 
@@ -110,6 +111,11 @@ public class NodeTransportClient
                 .WithOptions<WSClientOptions<TransportNetworkClient>>()
                 .WithCode(builder =>
                 {
+                    builder.AddConnectHandle(c =>
+                    {
+                        c.PingPongEnabled = true;
+                    });
+
                     builder.AddSendHandleForUnity((c, pid, len, st) =>
                     {
                         Debug.Log($"Send {pid} to transport client");
@@ -196,14 +202,14 @@ public class NodeTransportClient
 
     private void OnRoomReadyReceive(TransportNetworkClient client, InputPacketBuffer data)
     {
-        OnRoomAllNodesReady();
+        OnRoomAllNodesReady(data.ReadDateTime(), client.ServerDateTimeOffset);
     }
 
     public OnReceiveSignSessionResultDelegate OnSignOnServerResult = (result, instance, from) => { };
     public OnReceiveNodeListDelegate OnChangeNodeList = (data, transportClient) => { };
     public event OnReceiveNodeTransportDelegate OnTransport = (nodeId, buffer) => { };
 
-    public event Action OnRoomAllNodesReady = () => { };
+    public event OnRoomAllNodesReadyDelegate OnRoomAllNodesReady = (d, ts) => { };
 
     private class TransportNetworkClient : BaseSocketNetworkClient
     {
