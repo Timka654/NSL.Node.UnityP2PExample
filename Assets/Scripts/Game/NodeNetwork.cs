@@ -101,7 +101,7 @@ public class NodeNetwork : MonoBehaviour
     private async Task TryConnectAsync(CancellationToken cancellationToken = default)
     {
 #if DEBUG
-        TransportMode = NodeTransportMode.ProxyOnly;
+        TransportMode = NodeTransportMode.P2POnly;
 #endif
 
         try
