@@ -1,4 +1,5 @@
 using System;
+using System.Net;
 
 public class NSLEndPoint
 {
@@ -10,13 +11,13 @@ public class NSLEndPoint
         WS
     }
 
-    public Type ProtocolType { get; } = Type.Unknown;
+    public Type ProtocolType { get; private set; } = Type.Unknown;
 
-    public string EndPoint { get; }
+    public string EndPoint { get; private set; }
 
-    public string Address { get; }
+    public string Address { get; private set; }
 
-    public int Port { get; }
+    public int Port { get; private set; }
 
     private NSLEndPoint() { }
 
@@ -33,5 +34,17 @@ public class NSLEndPoint
         Port = uri.Port;
     }
 
+    public static NSLEndPoint FromUrl(string url)
+        => new NSLEndPoint(url);
+
+    public static NSLEndPoint FromIPAddress(Type protocolType, IPAddress address, int port)
+        => new NSLEndPoint($"{Enum.GetName(typeof(Type), protocolType)}://{address}:{port}");
+
+    public static NSLEndPoint FromDomain(Type protocolType, string address, int port)
+        => new NSLEndPoint($"{Enum.GetName(typeof(Type), protocolType)}://{address}:{port}");
+
     public static NSLEndPoint Parse(string endPoint) => new NSLEndPoint(endPoint);
+
+    public override string ToString()
+        => EndPoint;
 }

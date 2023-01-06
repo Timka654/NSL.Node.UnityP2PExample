@@ -1,4 +1,5 @@
 using NSL.BuilderExtensions.SocketCore;
+using NSL.BuilderExtensions.SocketCore.Unity;
 using NSL.BuilderExtensions.WebSocketsClient;
 using NSL.Node.BridgeServer.Shared.Enums;
 using NSL.SocketClient;
@@ -108,6 +109,16 @@ public class NodeTransportClient
                 .WithOptions<WSClientOptions<TransportNetworkClient>>()
                 .WithCode(builder =>
                 {
+                    builder.AddSendHandleForUnity((c, pid, len, st) =>
+                    {
+                        Debug.Log($"Send {pid} to transport client");
+                    });
+
+                    builder.AddReceiveHandleForUnity((c, pid, len) =>
+                    {
+                        Debug.Log($"Receive {pid} from transport client");
+                    });
+
                     builder.AddConnectHandle(client => client.Url = uri);
                     builder.AddPacketHandle(NodeTransportPacketEnum.SignSessionResult, OnSignSessionReceive);
                     builder.AddPacketHandle(NodeTransportPacketEnum.ChangeNodeList, OnChangeNodeListReceive);

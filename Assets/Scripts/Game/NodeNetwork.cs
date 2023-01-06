@@ -61,7 +61,12 @@ public class NodeNetwork : MonoBehaviour
     /// </summary>
     public int WaitBridgeDelayMS = 3000;
 
-    public event OnChangeRoomStateDelegate OnChangeRoomState = state => { };
+    public event OnChangeRoomStateDelegate OnChangeRoomState = state =>
+    {
+#if DEBUG
+        Debug.Log($"{nameof(NodeNetwork)} change state -> {state}");
+#endif
+    };
     public event OnChangeNodesReadyDelegate OnChangeNodesReady = (current, total) => { };
     public event OnChangeNodesReadyDelayDelegate OnChangeNodesReadyDelay = (current, total) => { };
 
@@ -168,7 +173,11 @@ public class NodeNetwork : MonoBehaviour
         endPoint.Start();
 
         if (endPoint?.StunInformation != null)
-            endPointConnectionUrl = $"udp://{endPoint.StunInformation.PublicEndPoint.Address}:{endPoint.StunInformation.PublicEndPoint.Port}";
+            endPointConnectionUrl = NSLEndPoint.FromIPAddress( 
+                NSLEndPoint.Type.UDP, 
+                endPoint.StunInformation.PublicEndPoint.Address,
+                endPoint.StunInformation.PublicEndPoint.Port
+                ).ToString();
         else
             endPointConnectionUrl = default;
     }
@@ -198,7 +207,7 @@ public class NodeNetwork : MonoBehaviour
 
                 var nodeClient = connectedClients.GetOrAdd(item.NodeId, id => new NodeClient(item, this, instance));
 
-                if (!nodeClient.TryConnect(item) && nodeClient.State == NodeClientState.None)
+                if (nodeClient.State == NodeClientState.None && !nodeClient.TryConnect(item))
                     throw new Exception($"Cannot connect");
             }
 
@@ -214,19 +223,20 @@ public class NodeNetwork : MonoBehaviour
 
     private async Task WaitNodeConnection(CancellationToken cancellationToken = default)
     {
-        OnChangeRoomState(RoomStateEnum.WaitConnections);
-
-        for (int i = 1; i < MaxNodesWaitCycle + 1 && connectedClients.Count < roomStartInfo.TotalPlayerCount - 1; i++)
+        do
         {
-            await Task.Delay(1000, cancellationToken);
+            OnChangeRoomState(RoomStateEnum.WaitConnections);
 
-            OnChangeNodesReadyDelay(i, MaxNodesWaitCycle);
-        }
+            for (int i = 1; i < MaxNodesWaitCycle + 1 && connectedClients.Count < roomStartInfo.TotalPlayerCount - 1; i++)
+            {
+                await Task.Delay(1000, cancellationToken);
 
-        await Task.Delay(500, cancellationToken);
+                OnChangeNodesReadyDelay(i, MaxNodesWaitCycle);
+            }
 
-        if (await transportClient.SendReady(roomStartInfo.TotalPlayerCount, connectedClients.Select(x => x.Key).Append(LocalNodeId)) || MaxNodesWaitCycle == 0)
-            OnChangeRoomState(RoomStateEnum.Ready);
+            await Task.Delay(500, cancellationToken);
+
+        } while (!(await transportClient.SendReady(roomStartInfo.TotalPlayerCount, connectedClients.Select(x => x.Key).Append(LocalNodeId)) || MaxNodesWaitCycle == 0));
     }
 
     public void Broadcast(Action<OutputPacketBuffer> builder)
