@@ -144,7 +144,6 @@ public class NodeTransportClient
                 continue;
 
             count++;
-
             connections.Add(item.Key, item.Value);
         }
 
