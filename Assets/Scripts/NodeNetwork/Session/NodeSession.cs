@@ -4,8 +4,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using static NodeBridgeClient;
-using static NodeLobbyNetwork;
-using static UnityEditor.Progress;
 
 public class NodeSession : NodeSession<NodeSessionOptions>
 {

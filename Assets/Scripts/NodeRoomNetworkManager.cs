@@ -1,5 +1,5 @@
-using NSL.Node.LobbyServerExample.Shared.Enums;
-using NSL.Node.LobbyServerExample.Shared.Models;
+
+using Assets.Scripts.NodeNetwork.Enums;
 using NSL.SocketCore.Extensions.Buffer;
 using NSL.SocketCore.Utils.Buffer;
 using System;
@@ -32,6 +32,7 @@ public class NodeRoomNetworkManager : MonoBehaviour
         {
             lobby.Disconnect(); // for death connection of ping alive
             await lobby.Connect();
+            HandShake();
         }
         return true;
     }
@@ -137,6 +138,12 @@ public class NodeRoomNetworkManager : MonoBehaviour
         return lobby.Send(packet);
     }
 
+    public void HandShake()
+    {
+        var packet = OutputPacketBuffer.Create(ServerReceivePacketEnum.HandshakeResponse);
+        packet.WriteGuid(HandShakeGuid);
+        lobby.Send(packet);
+    }
     public async Task LeaveRoom()
     {
         if (CurrentRoom == default)
@@ -162,12 +169,12 @@ public class NodeRoomNetworkManager : MonoBehaviour
     }
 
     public LobbyRoomModel CurrentRoom { get; private set; }
+    public Guid HandShakeGuid { get; set; }
 
     public void OpenListRoomScreen()
     {
         CreateRoomScreen.Hide();
         RoomInfoScreen.Hide();
-
         ListRoomScreen.Show();
     }
 

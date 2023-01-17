@@ -1,21 +1,16 @@
+using Assets.Scripts.NodeNetwork.Enums;
 using NSL.BuilderExtensions.SocketCore;
 using NSL.BuilderExtensions.SocketCore.Unity;
 using NSL.BuilderExtensions.WebSocketsClient;
-using NSL.Node.LobbyServerExample.Shared.Enums;
 using NSL.SocketClient;
-using NSL.SocketClient.Utils;
-using NSL.SocketCore.Utils;
 using NSL.SocketCore.Extensions.Buffer;
 using NSL.SocketCore.Utils.Buffer;
 using NSL.WebSockets.Client;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.EventSystems;
-using UnityEngine.Rendering;
 
 public class NodeLobbyNetwork
 {
@@ -87,6 +82,7 @@ public class NodeLobbyNetwork
                 builder.AddPacketHandle(ClientReceivePacketEnum.ChatMessage, (client, data) => OnRoomChatMessage(RoomChatMessageInfo.Read(data)));
                 builder.AddPacketHandle(ClientReceivePacketEnum.RoomMemberJoinMessage, (client, data) => OnRoomJoinMemberMessage(RoomJoinMemberMessageInfo.Read(data)));
                 builder.AddPacketHandle(ClientReceivePacketEnum.RoomMemberLeaveMessage, (client, data) => OnRoomLeaveMemberMessage(data.ReadGuid()));
+                builder.AddPacketHandle(ClientReceivePacketEnum.ErrorHandShake, (client, data) => OnHandshakeFailed());
 
             })
             .Build();
@@ -111,6 +107,7 @@ public class NodeLobbyNetwork
     public event Action<RoomJoinMemberMessageInfo> OnRoomJoinMemberMessage = data => { };
 
     public event Action<Guid> OnRoomLeaveMemberMessage = data => { };
+    public event Action OnHandshakeFailed = () => { };
 
     #region Connect
 

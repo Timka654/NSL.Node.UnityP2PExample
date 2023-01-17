@@ -7,7 +7,6 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using static UnityEditor.ObjectChangeEventStream;
 public class RoomInfoScreen : MonoBehaviour
 {
     [SerializeField] private NodeRoomNetworkManager roomNetworkManager;
@@ -25,6 +24,7 @@ public class RoomInfoScreen : MonoBehaviour
 
     [SerializeField] private string gameSceneName;
 
+
     public LobbyRoomModel CurrentRoom => roomNetworkManager.CurrentRoom;
 
     private NodeLobbyNetwork network => roomNetworkManager.GetNetwork();
@@ -35,6 +35,7 @@ public class RoomInfoScreen : MonoBehaviour
         network.OnRoomChatMessage += Network_OnRoomChatMessage;
         network.OnRoomJoinMemberMessage += Network_OnRoomJoinMemberMessage;
         network.OnRoomLeaveMemberMessage += Network_OnRoomLeaveMemberMessage;
+        network.OnHandshakeFailed += Network_OnHandshakeFailed;
         network.OnLobbyRemoveRoomMessage += Network_OnLobbyRemoveRoomMessage;
 
         startBtn.onClick.AddListener(OnStartBtnClick);
@@ -74,6 +75,11 @@ public class RoomInfoScreen : MonoBehaviour
             roomNetworkManager.OpenListRoomScreen();
     }
 
+    private void Network_OnHandshakeFailed()
+    {
+        Debug.LogError("Handshake failed");
+    }
+
     private Dictionary<Guid, GameObject> members = new Dictionary<Guid, GameObject>();
 
     private void Network_OnRoomLeaveMemberMessage(Guid obj)
@@ -81,7 +87,6 @@ public class RoomInfoScreen : MonoBehaviour
         if (members.Remove(obj, out var go))
             Destroy(go);
     }
-
     private void Network_OnRoomJoinMemberMessage(NodeLobbyNetwork.RoomJoinMemberMessageInfo obj)
     {
         joinMember(obj.UserId, obj.UserId.ToString());
@@ -115,7 +120,7 @@ public class RoomInfoScreen : MonoBehaviour
             }
             catch (Exception ex)
             {
-                Debug.LogError(ex);
+                UnityEngine.Debug.LogError(ex);
             }
 
             // todo : game loading
@@ -134,6 +139,7 @@ public class RoomInfoScreen : MonoBehaviour
         network.OnRoomChatMessage -= Network_OnRoomChatMessage;
         network.OnRoomJoinMemberMessage -= Network_OnRoomJoinMemberMessage;
         network.OnRoomLeaveMemberMessage -= Network_OnRoomLeaveMemberMessage;
+        network.OnHandshakeFailed += Network_OnHandshakeFailed;
         network.OnLobbyRemoveRoomMessage -= Network_OnLobbyRemoveRoomMessage;
 
         startBtn.onClick.RemoveAllListeners();
