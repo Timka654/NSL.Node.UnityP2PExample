@@ -3,6 +3,7 @@
 using NU.Core.Models.Response;
 using NuGetV3.Data;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -34,10 +35,10 @@ namespace NuGetV3
 
             await threadOperationLocker.WaitAsync();
 
-            foreach (var item in repositories)
+            await Task.WhenAll(repositories.Select(item => Task.Run(async () =>
             {
                 if (nuGetIndexMap.ContainsKey(item.Name))
-                    continue;
+                    return;
 
                 try
                 {
@@ -51,26 +52,26 @@ namespace NuGetV3
                             {
                                 NUtils.LogError(settings, $"Cannot receive from source {item.Name}({item.Value}) - {response.StatusCode}({Enum.GetName(typeof(HttpStatusCode), response.StatusCode)})");
 
-                                continue;
+                                return;
                             }
 
                             var content = await response.Content.ReadAsStringAsync();
 
                             var entry = JsonSerializer.Deserialize<NugetIndexResponseModel>(content, NUtils.JsonOptions);
 
-                            nuGetIndexMap.Add(item.Name, entry);
+                            nuGetIndexMap.TryAdd(item.Name, entry);
                         }
                     }
                 }
                 catch (TaskCanceledException)
                 {
-                    continue;
+                    return;
                 }
                 catch (Exception ex)
                 {
                     NUtils.LogError(settings, ex.ToString());
                 }
-            }
+            })));
 
             threadOperationLocker.Release();
 
@@ -79,14 +80,14 @@ namespace NuGetV3
 
         }
 
-        public async void QueryRequestAsync(string query, int? take, Action onFinished, Dictionary<string, RepositoryPackagesViewModel> nugetQueryMap, CancellationToken cancellationToken)
+        public async void QueryRequestAsync(string query, int? take, Action onFinished, ConcurrentDictionary<string, RepositoryPackagesViewModel> nugetQueryMap, CancellationToken cancellationToken)
             => await QueryRequest(query, take, onFinished, nugetQueryMap, cancellationToken);
 
-        public async Task QueryRequest(string query, int? take, Action onFinished, Dictionary<string, RepositoryPackagesViewModel> nugetQueryMap, CancellationToken cancellationToken)
+        public async Task QueryRequest(string query, int? take, Action onFinished, ConcurrentDictionary<string, RepositoryPackagesViewModel> nugetQueryMap, CancellationToken cancellationToken)
         {
             try { await threadOperationLocker.WaitAsync(cancellationToken); } catch { return; }
 
-            foreach (var item in nuGetIndexMap)
+            await Task.WhenAll(nuGetIndexMap.Select(item => Task.Run(async () =>
             {
                 var supporedSource = item.Value.Resources
                     .FirstOrDefault(x => NugetServiceTypes.SearchQueryService.Contains(x.Type));
@@ -96,13 +97,13 @@ namespace NuGetV3
                 if (supporedSource == null)
                 {
                     NUtils.LogError(settings, $"Not found valid source in repository {repo.Name}({repo.Value})");
-                    continue;
+                    return;
                 }
 
                 if (!nugetQueryMap.TryGetValue(repo.Name, out var exists))
                 {
                     exists = new RepositoryPackagesViewModel() { Packages = new List<RepositoryPackageViewModel>() };
-                    nugetQueryMap.Add(repo.Name, exists);
+                    nugetQueryMap.TryAdd(repo.Name, exists);
                 }
 
                 try
@@ -136,7 +137,7 @@ namespace NuGetV3
                             {
                                 NUtils.LogError(settings, $"Cannot receive from source {repo.Name}({supporedSource.Url}) - {response.StatusCode}({Enum.GetName(typeof(HttpStatusCode), response.StatusCode)})");
 
-                                continue;
+                                return;
                             }
 
                             var content = await response.Content.ReadAsStringAsync();
@@ -167,13 +168,13 @@ namespace NuGetV3
                 }
                 catch (TaskCanceledException)
                 {
-                    continue;
+                    return;
                 }
                 catch (Exception ex)
                 {
                     NUtils.LogError(settings, ex.ToString());
                 }
-            }
+            })));
 
             threadOperationLocker.Release();
 
@@ -193,6 +194,7 @@ namespace NuGetV3
 
             if (package.Registration == null)
                 package.Registration = new NugetRegistrationResponseModel() { Items = new List<NugetRegistrationPageModel>() };
+
 
             foreach (var item in nuGetIndexMap)
             {
@@ -253,7 +255,7 @@ namespace NuGetV3
             if (package.VersionsReceived.HasValue && package.VersionsReceived.Value.AddMinutes(10) > DateTime.UtcNow)
             {
 
-                onSuccess(false, package.Versions.Select(x=>x.ToString()));
+                onSuccess(false, package.Versions.Select(x => x.ToString()));
                 return Task.CompletedTask;
             }
 
