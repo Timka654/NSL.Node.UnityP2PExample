@@ -43,8 +43,6 @@ public class NodeLobbyNetwork
                 //    Debug.Log($"[Client] Success connected");
                 //});
 
-                //builder.AddPacketHandle
-
                 builder.AddSendHandleForUnity((client, pid, len, stack) =>
                 {
                     Debug.Log($"Send {pid} to lobby client");

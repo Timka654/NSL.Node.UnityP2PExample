@@ -1,0 +1,51 @@
+{
+  "InstalledVersionCatalog": {
+    "@id": null,
+    "Authors": "Relife87",
+    "DependencyGroups": [
+      {
+        "@id": null,
+        "TargetFramework": ".NETStandard2.0",
+        "Dependencies": []
+      }
+    ],
+    "Description": "\u0411\u0438\u0431\u043B\u0438\u043E\u0442\u0435\u043A\u0430 \u0441\u043E\u0434\u0435\u0440\u0436\u0430\u0449\u0430\u044F \u0431\u0430\u0437\u043E\u0432\u044B\u0435 \u043A\u043B\u0430\u0441\u0441\u044B \u0434\u043B\u044F \u0432\u0437\u0430\u0438\u043C\u043E\u0434\u0435\u0439\u0441\u0442\u0432\u0438\u044F \u043F\u043E \u0441\u0435\u0442\u0435\u0432\u043E\u043C\u0443 \u043F\u0440\u043E\u0442\u043E\u043A\u043E\u043B\u0443 TCP",
+    "IconUrl": null,
+    "Id": "Unity.NSL.SocketCore",
+    "Launguage": null,
+    "LicenseUrl": null,
+    "Listed": true,
+    "MinClientVersion": null,
+    "packageContent": "https://nuget.twicepricegroup.com/api/Package/fdc0f390-ac03-4981-9208-a4241196ea2c-1aa7e63b-7a53-4e6c-8b47-99bcc56a1a1b-ff706b44-7248-45d9-8de5-736437532bbd/v3-flatcontainer/Unity.NSL.SocketCore/2023.1.18.1421/Unity.NSL.SocketCore.2023.1.18.1421.nupkg",
+    "ProjectUrl": null,
+    "Published": "2023-01-18T12:29:02.941734Z",
+    "RequireLicenseAcceptance": false,
+    "Summary": null,
+    "Tags": [
+      ""
+    ],
+    "Title": null,
+    "Version": "2023.1.18.1421",
+    "Vulnerabilities": null
+  },
+  "SelectedFrameworkDeps": {
+    "@id": null,
+    "TargetFramework": ".NETStandard2.0",
+    "Dependencies": []
+  },
+  "SelectedVersion": {
+    "Version": "2023.1.18.1421",
+    "IsLegacyVersion": true,
+    "Revision": 1421,
+    "IsSemVer2": false,
+    "OriginalVersion": "2023.1.18.1421",
+    "Major": 2023,
+    "Minor": 1,
+    "Patch": 18,
+    "ReleaseLabels": [],
+    "Release": "",
+    "IsPrerelease": false,
+    "HasMetadata": false,
+    "Metadata": ""
+  }
+}

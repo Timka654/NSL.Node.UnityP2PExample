@@ -176,8 +176,6 @@ public class NodeClient
 
                     networkClient = client.Network;
                 });
-
-                builder.AddPacketHandle(NodeTransportPacketEnum.Transport, OnReceiveTransportHandle);
             })
             .Build();
 
@@ -191,7 +189,6 @@ public class NodeClient
         buffer.ReadGuid();
 
         Proxy_OnTransport(PlayerId, buffer);
-
     }
 
     #region Transport

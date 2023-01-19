@@ -151,7 +151,7 @@ public class NodeNetwork : MonoBehaviour
         OnChangeRoomState(RoomStateEnum.WaitTransportServerList);
 
 #if DEBUG
-        await Task.Delay(2000, cancellationToken);
+        WaitBridgeDelayMS = 10_000;
 #endif
 
         await Task.Delay(WaitBridgeDelayMS, cancellationToken);
@@ -177,6 +177,8 @@ public class NodeNetwork : MonoBehaviour
                 {
                     Debug.LogError(ex.ToString());
                 });
+
+                //builder.AddReceivePacketHandle(NodeTransportPacketEnum.Transport,)
             })
             .Build();
 
