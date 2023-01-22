@@ -157,7 +157,7 @@ public class NodeClient
             networkClient.Send(packet, false);
 
         if (NodeNetwork.TransportMode.HasFlag(NodeTransportMode.ProxyOnly))
-            Proxy.Transport(packet);
+            Proxy.Send(packet);
 
         packet.Dispose();
     }

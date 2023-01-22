@@ -25,7 +25,8 @@ public enum NodeTransportPacketEnum
     Broadcast,
     ReadyNodePID,
     ReadyNodeResultPID = ReadyNodePID,
-    ReadyRoom
+    ReadyRoom,
+    Execute
 }
 public class NodeTransportClient
 {
@@ -94,14 +95,14 @@ public class NodeTransportClient
         packet.WriteInt32(targetTileCoords.Y);
         packet.WriteInt32(targetTileCoords.X);
 
-        Transport(packet);
+        Send(packet);
     }
     public async Task SendPlayerFinishedExpand(int playerTeam)
     {
         var packet = OutputPacketBuffer.Create(NodeTransportPacketEnum.Transport);
         packet.WriteInt16((short)GameCommandsEnum.PlayerFinishedExpand);
         packet.WriteInt32(playerTeam);
-        Transport(packet);
+        Send(packet);
     }
     public async Task SendPlayerGrowTile(int playerTeam, (int Y, int X) tileCoords)
     {
@@ -110,7 +111,7 @@ public class NodeTransportClient
         packet.WriteInt32(playerTeam);
         packet.WriteInt32(tileCoords.Y);
         packet.WriteInt32(tileCoords.X);
-        Transport(packet);
+        Send(packet);
 
     }
     public async Task SendPlayerFinisheTurn(int playerTeam)
@@ -119,10 +120,10 @@ public class NodeTransportClient
         packet.WriteInt16((short)GameCommandsEnum.PlayerFinishedTurn);
         packet.WriteInt32(playerTeam);
 
-        Transport(packet);
+        Send(packet);
     }
 
-    public void Transport(OutputPacketBuffer packet)
+    public void Send(OutputPacketBuffer packet)
     {
         foreach (var item in connections)
         {

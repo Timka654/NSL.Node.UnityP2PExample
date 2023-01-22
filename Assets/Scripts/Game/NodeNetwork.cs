@@ -1,3 +1,4 @@
+using Mono.Cecil.Cil;
 using NSL.BuilderExtensions.SocketCore;
 using NSL.BuilderExtensions.SocketCore.Unity;
 using NSL.BuilderExtensions.UDPClient;
@@ -8,6 +9,7 @@ using NSL.SocketServer.Utils;
 using NSL.UDP.Client;
 using NSL.UDP.Client.Info;
 using NSL.UDP.Client.Interface;
+using SimpleGame;
 using System;
 using System.Collections;
 using System.Collections.Concurrent;
@@ -252,6 +254,8 @@ public class NodeNetwork : MonoBehaviour
     {
         do
         {
+            await Task.Delay(1000, cancellationToken);
+
             OnChangeRoomState(RoomStateEnum.WaitConnections);
 
             for (int i = 0; i < MaxNodesWaitCycle && connectedClients.Count < roomStartInfo.TotalPlayerCount - 1; i++)
@@ -268,23 +272,30 @@ public class NodeNetwork : MonoBehaviour
 
     public bool Broadcast(Action<OutputPacketBuffer> builder, ushort code)
     {
-        if (!Ready)
-            return false;
-
-        Parallel.ForEach(connectedClients, c => { c.Value.Transport(builder, code); });
-
-        //var packet = new OutputPacketBuffer().WithPid(NodeTransportPacketEnum.Broadcast);
-
-        return true;
+        return Broadcast(p =>
+        {
+            p.WriteUInt16(code);
+            builder(p);
+        });
     }
 
     public bool Broadcast(Action<OutputPacketBuffer> builder)
     {
         if (!Ready)
             return false;
-        Parallel.ForEach(connectedClients, c => { c.Value.Transport(builder); });
 
-        //var packet = new OutputPacketBuffer().WithPid(NodeTransportPacketEnum.Broadcast);
+        if (connectedClients.Any())
+            Parallel.ForEach(connectedClients, c => { c.Value.Transport(builder); });
+        else
+        {
+            var packet = new OutputPacketBuffer();
+
+            builder(packet);
+
+            packet.WithPid(NodeTransportPacketEnum.Execute);
+
+            transportClient.Send(packet);
+        }
 
         return true;
     }
@@ -329,24 +340,24 @@ public class NodeNetwork : MonoBehaviour
 
 #if DEBUG
 
-    private void Update()
-    {
-        if (Ready)
-        {
-            var delta = Time.deltaTime;
+    //private void Update()
+    //{
+    //    if (Ready)
+    //    {
+    //        var delta = Time.deltaTime;
 
-            Broadcast(p =>
-            {
-                p.WriteFloat(delta);
-            }, 11);
-        }
-    }
+    //        Broadcast(p =>
+    //        {
+    //            p.WriteFloat(delta);
+    //        }, 11);
+    //    }
+    //}
 
     public void SendCommand1()
     {
 
         Broadcast(p =>
-        {}, 1);
+        { }, 1);
     }
 #endif
 }
