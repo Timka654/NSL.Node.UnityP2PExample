@@ -195,8 +195,7 @@ namespace NuGetV3
             if (package.Registration == null)
                 package.Registration = new NugetRegistrationResponseModel() { Items = new List<NugetRegistrationPageModel>() };
 
-
-            foreach (var item in nuGetIndexMap)
+            await Task.WhenAll(nuGetIndexMap.Select(item => Task.Run(async () =>
             {
                 var supporedSource = item.Value.Resources
                     .FirstOrDefault(x => NugetServiceTypes.RegistrationsBaseUrl.Contains(x.Type));
@@ -206,7 +205,7 @@ namespace NuGetV3
                 if (supporedSource == null)
                 {
                     NUtils.LogError(settings, $"Not found valid source in repository {repo.Name}({repo.Value})");
-                    continue;
+                    return;
                 }
 
                 try
@@ -218,7 +217,7 @@ namespace NuGetV3
                         using (var response = await client.GetAsync(supporedSource.Url.TrimEnd('/') + $"/{package.PackageQueryInfo.Id.ToLower()}/index.json"))
                         {
                             if (!response.IsSuccessStatusCode)
-                                continue;
+                                return;
 
                             var content = await response.Content.ReadAsStringAsync();
 
@@ -230,13 +229,13 @@ namespace NuGetV3
                 }
                 catch (TaskCanceledException)
                 {
-                    continue;
+                    return;
                 }
                 catch (Exception ex)
                 {
                     NUtils.LogError(settings, ex.ToString());
                 }
-            }
+            })));
 
             threadOperationLocker.Release();
 
@@ -268,7 +267,7 @@ namespace NuGetV3
 
             List<(string, string[])> result = new List<(string, string[])>();
 
-            foreach (var item in nuGetIndexMap)
+            await Task.WhenAll(nuGetIndexMap.Select(item => Task.Run(async () =>
             {
                 var supporedSource = item.Value.Resources
                     .FirstOrDefault(x => NugetServiceTypes.PackageBaseAddress.Contains(x.Type));
@@ -278,7 +277,7 @@ namespace NuGetV3
                 if (supporedSource == null)
                 {
                     NUtils.LogError(settings, $"Not found valid source in repository {repo.Name}({repo.Value})");
-                    continue;
+                    return;
                 }
 
                 try
@@ -290,7 +289,7 @@ namespace NuGetV3
                         using (var response = await client.GetAsync(supporedSource.Url.TrimEnd('/') + $"/{name.ToLower()}/index.json"))
                         {
                             if (!response.IsSuccessStatusCode)
-                                continue;
+                                return;
 
                             var content = await response.Content.ReadAsStringAsync();
 
@@ -302,13 +301,13 @@ namespace NuGetV3
                 }
                 catch (TaskCanceledException)
                 {
-                    continue;
+                    return;
                 }
                 catch (Exception ex)
                 {
                     NUtils.LogError(settings, ex.ToString());
                 }
-            }
+            })));
 
             threadOperationLocker.Release();
 
