@@ -22,7 +22,7 @@ namespace SimpleGame
                 Players.Add(player);
             }
 
-            Field = new Field(25, 25);
+            Field = new Field(10, 10);
 
             Field.SetPlayers(Players);
         }

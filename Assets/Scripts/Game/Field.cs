@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Security.Cryptography;
 
 namespace SimpleGame
 {
@@ -10,6 +11,11 @@ namespace SimpleGame
         public Field(int width = 100, int height = 100)
         {
             Tiles = GenerateTiles(height, width);
+
+            foreach (var t in Tiles)
+            {
+                t.SetNeighbours(this);
+            }
         }
 
         internal void SetPlayers(List<Player> players)
@@ -42,15 +48,11 @@ namespace SimpleGame
             {
                 for (int j = 0; j < width; j++)
                 {
-                    Tiles[i, j] = new Tile();
-                    Tiles[i, j].SetCoordinates(i, j);
+                    res[i, j] = new Tile();
+                    res[i, j].SetCoordinates(i, j);
                 }
             }
 
-            foreach (var t in Tiles)
-            {
-                t.SetNeighbours(this);
-            }
             return res;
         }
     }

@@ -8,7 +8,7 @@ using UnityEngine.Networking;
 using WelcomeServer.Data.DTO;
 using System.Collections;
 using System;
-
+  
 public class WelcomeScreen : MonoBehaviour
 {
     [SerializeField] private NodeRoomNetworkManager roomNetworkManager;
@@ -24,6 +24,7 @@ public class WelcomeScreen : MonoBehaviour
 
         var login = loginField;
         var password = passwordField.text;
+
         if (loginField.text == null || loginField.text == string.Empty)
         {
             Debug.LogError("Login is null");
@@ -39,6 +40,7 @@ public class WelcomeScreen : MonoBehaviour
         var jsonData = JsonConvert.SerializeObject(creds);
         var bytes = new System.Text.UTF8Encoding().GetBytes(jsonData);
         var req = new UnityWebRequest(NetworkConfig.WelcomeServerUrl + NetworkConfig.LoginUrl, "POST");
+        req.certificateHandler = new CertificateWhore();
         req.uploadHandler = new UploadHandlerRaw(bytes);
         req.SetRequestHeader("Content-Type", "application/json");
         req.downloadHandler = new DownloadHandlerBuffer();
@@ -55,5 +57,12 @@ public class WelcomeScreen : MonoBehaviour
             Debug.LogError(req.result);
             yield break;
         }
+    }
+}
+public class CertificateWhore : CertificateHandler
+{
+    protected override bool ValidateCertificate(byte[] certificateData)
+    {
+        return true;
     }
 }

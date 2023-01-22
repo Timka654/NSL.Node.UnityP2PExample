@@ -6,5 +6,5 @@ using UnityEngine;
 public class PlayerView : MonoBehaviour
 {
     public Player PlayerModel { get; set; }
-    public Color TeamColor { get; set; }
+    public Color TeamColor;
 }

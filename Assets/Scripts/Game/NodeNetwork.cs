@@ -230,6 +230,7 @@ public class NodeNetwork : MonoBehaviour
 
                 if (nodeClient.State == NodeClientState.None)
                 {
+                    nodeClient.RegisterHandle(1, (node, buffer) => { Debug.Log($"receive from {node.PlayerId}"); });
                     nodeClient.RegisterHandle(11, (node, buffer) => { Debug.Log($"receive {buffer.ReadFloat()} from {node.PlayerId}"); });
 
                     if (!nodeClient.TryConnect(item))
@@ -315,7 +316,7 @@ public class NodeNetwork : MonoBehaviour
 
         return false;
     }
-    
+
     public bool SendTo(Guid nodeId, Action<OutputPacketBuffer> builder, ushort code)
     {
         if (connectedClients.TryGetValue(nodeId, out var node))
@@ -339,6 +340,13 @@ public class NodeNetwork : MonoBehaviour
                 p.WriteFloat(delta);
             }, 11);
         }
+    }
+
+    public void SendCommand1()
+    {
+
+        Broadcast(p =>
+        {}, 1);
     }
 #endif
 }

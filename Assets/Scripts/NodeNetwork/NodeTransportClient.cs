@@ -1,3 +1,4 @@
+using Assets.Scripts.NodeNetwork.Enums;
 using NSL.BuilderExtensions.SocketCore;
 using NSL.BuilderExtensions.SocketCore.Unity;
 using NSL.BuilderExtensions.WebSocketsClient;
@@ -6,6 +7,7 @@ using NSL.SocketClient;
 using NSL.SocketCore.Extensions.Buffer;
 using NSL.SocketCore.Utils.Buffer;
 using NSL.WebSockets.Client;
+using SimpleGame.Game;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -81,6 +83,43 @@ public class NodeTransportClient
         }
 
         return state;
+    }
+
+    public async Task SendPlayerExpand(int playerTeam, (int Y, int X) originTileCoords, (int Y, int X) targetTileCoords)
+    {
+        var packet = OutputPacketBuffer.Create(GameCommandsEnum.PlayerExpand);
+        packet.WriteInt32(playerTeam);
+        packet.WriteInt32(originTileCoords.Y);
+        packet.WriteInt32(originTileCoords.X);
+        packet.WriteInt32(targetTileCoords.Y);
+        packet.WriteInt32(targetTileCoords.X);
+
+        Transport(packet);
+    }
+    public async Task SendPlayerFinishedExpand(int playerTeam)
+    {
+        var packet = OutputPacketBuffer.Create(NodeTransportPacketEnum.Transport);
+        packet.WriteInt16((short)GameCommandsEnum.PlayerFinishedExpand);
+        packet.WriteInt32(playerTeam);
+        Transport(packet);
+    }
+    public async Task SendPlayerGrowTile(int playerTeam, (int Y, int X) tileCoords)
+    {
+        var packet = OutputPacketBuffer.Create(NodeTransportPacketEnum.Transport);
+        packet.WriteInt16((short)GameCommandsEnum.PlayerGrowTile);
+        packet.WriteInt32(playerTeam);
+        packet.WriteInt32(tileCoords.Y);
+        packet.WriteInt32(tileCoords.X);
+        Transport(packet);
+
+    }
+    public async Task SendPlayerFinisheTurn(int playerTeam)
+    {
+        var packet = OutputPacketBuffer.Create(NodeTransportPacketEnum.Transport);
+        packet.WriteInt16((short)GameCommandsEnum.PlayerFinishedTurn);
+        packet.WriteInt32(playerTeam);
+
+        Transport(packet);
     }
 
     public void Transport(OutputPacketBuffer packet)

@@ -132,7 +132,7 @@ public class RoomInfoScreen : MonoBehaviour
 
     public void Hide()
     {
-        if (destroyed)
+        if (destroyed || network==null)
             return;
 
         network.OnRoomStartedMessage -= Network_OnRoomStartedMessage;

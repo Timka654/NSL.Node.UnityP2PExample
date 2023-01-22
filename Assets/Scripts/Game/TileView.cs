@@ -4,11 +4,10 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using System.Linq;
 [RequireComponent(typeof(SpriteRenderer))]
-public class TileView : MonoBehaviour, IPointerClickHandler
+public class TileView : MonoBehaviour
 {
     public Game GameView { get; set; }
 
-   SpriteRenderer m_Image;
     [SerializeField]
 
 
@@ -18,62 +17,80 @@ public class TileView : MonoBehaviour, IPointerClickHandler
     [SerializeField]
     Sprite defaultSprite;
     [SerializeField]
-    private SpriteRenderer img;
+    SpriteRenderer spriteRenderer;
+
     [SerializeField]
-    Text Text;
-    public Tile Tile { get; set; }
+    public Tile TileModel { get; set; }
 
     public State state;
     private void Start()
     {
-        m_Image = GetComponent<SpriteRenderer>();
-        Tile.OnControllerChanged += ChangeController;
+        //spriteRenderer = GetComponent<SpriteRenderer>();
+    }
+    public void Init(Tile tile, Game game)
+
+    {
+        this.game = game; TileModel = tile;
+        TileModel.OnControllerChanged += ChangeController;
+        state = State.Default;
+        UpdateImage();
     }
 
     private void ChangeController((Player player, int playerTeam) controller)
     {
         var playerColor = game.PlayerViews.FirstOrDefault(p => p.PlayerModel.Team == controller.playerTeam).TeamColor;
-        img.color = playerColor;
+        spriteRenderer.color = playerColor;
     }
 
     private void OnDestroy()
     {
-        Tile.OnControllerChanged -= ChangeController;
+        TileModel.OnControllerChanged -= ChangeController;
     }
 
-    public void OnPointerClick(PointerEventData eventData)
+    public void OnMouseDown()
+
     {
         game.OnTileClick(this);
+        Debug.Log($"Click : {TileModel.Coordinates}");
     }
 
     public void UpdateImage()
     {
         PlayerView controller;
-        Text.text = Tile.Power.ToString();
+        gameObject.transform.localScale = new Vector3(1f + (0.1f - TileModel.Power / 10f), 1f + (0.1f - TileModel.Power / 10f), 1);
         switch (state)
         {
             case State.Default:
-                m_Image.sprite = defaultSprite;
-
-                controller = game.PlayerViews.FirstOrDefault(p => p.PlayerModel.Team == Tile.Controller.Team);
-                if (controller == null)
+                spriteRenderer.sprite = defaultSprite;
+                if (TileModel.Controller.Player == null)
                 {
-                    m_Image.color = Color.white;
+                    spriteRenderer.color = Color.white;
                     break;
                 }
-                m_Image.color = controller.TeamColor;
+                controller = game.PlayerViews.FirstOrDefault(p => p.PlayerModel.Team == TileModel.Controller.Team);
+                if (controller == null)
+                {
+                    spriteRenderer.color = Color.white;
+                    break;
+                }
+                spriteRenderer.color = controller.TeamColor;
                 break;
 
 
             case State.Selected:
-                m_Image.sprite = selectedSprite;
-                controller = game.PlayerViews.FirstOrDefault(p => p.PlayerModel.Team == Tile.Controller.Team);
-                if (controller == null)
+                spriteRenderer.sprite = selectedSprite;
+                if (TileModel.Controller.Player == null)
                 {
-                    m_Image.color = Color.white;
+                    spriteRenderer.color = Color.white;
                     break;
                 }
-                m_Image.color = controller.TeamColor;
+                controller = game.PlayerViews.FirstOrDefault(p => p.PlayerModel.Team == TileModel.Controller.Team);
+                if (controller == null)
+                {
+                    spriteRenderer.color = Color.white;
+                    break;
+                }
+                spriteRenderer.color = controller.TeamColor;
                 break;
 
 

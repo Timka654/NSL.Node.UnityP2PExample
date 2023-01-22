@@ -14,8 +14,8 @@ namespace SimpleGame
 
         public Action<(int, int)> OnCoordsChanged;
         public Action<(Player Player, int Team)> OnControllerChanged;
-        
-        
+
+
         public void SetCoordinates(int Y, int X)
         {
             Coordinates = (Y, X);
@@ -31,21 +31,22 @@ namespace SimpleGame
 
         public void SetNeighbours(Field field)
         {
-            if (Coordinates.X > 0 && Coordinates.Y > 0)
+            Neigbours = new List<Tile>();
+            if (Coordinates.X > 0)
             {
-                Neigbours.Add(field.Tiles[Coordinates.X - 1, Coordinates.Y - 1]);
+                Neigbours.Add(field.Tiles[Coordinates.Y, Coordinates.X - 1]);
             }
-            if (Coordinates.X < field.Tiles.GetLength(0) && Coordinates.Y > 0)
+            if (Coordinates.X < field.Tiles.GetLength(1)-1)
             {
-                Neigbours.Add(field.Tiles[Coordinates.X + 1, Coordinates.Y - 1]);
+                Neigbours.Add(field.Tiles[Coordinates.Y, Coordinates.X + 1]);
             }
-            if (Coordinates.X < field.Tiles.GetLength(0) && Coordinates.Y < field.Tiles.GetLength(1))
+            if (Coordinates.Y < field.Tiles.GetLength(0) - 1)
             {
-                Neigbours.Add(field.Tiles[Coordinates.X + 1, Coordinates.Y + 1]);
+                Neigbours.Add(field.Tiles[Coordinates.Y + 1, Coordinates.X]);
             }
-            if (Coordinates.X < field.Tiles.GetLength(0) && Coordinates.Y < field.Tiles.GetLength(1))
+            if (Coordinates.Y > 0)
             {
-                Neigbours.Add(field.Tiles[Coordinates.X - 1, Coordinates.Y + 1]);
+                Neigbours.Add(field.Tiles[Coordinates.Y - 1, Coordinates.X]);
             }
         }
     }

@@ -10,7 +10,7 @@ namespace Assets.Scripts.NodeNetwork
     {
         public static readonly string WelcomeServerUrl = "https://localhost:7254/";
 
-        public static readonly string LoginUrl = "Login";
-        public static readonly string SignUpUrl = "SignUp";
+        public static readonly string LoginUrl = "Users/Login";
+        public static readonly string SignUpUrl = "Users/SignUp";
     }
 }
