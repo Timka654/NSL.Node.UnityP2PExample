@@ -7,6 +7,7 @@ using NSL.SocketCore;
 using NSL.SocketCore.Utils;
 using NSL.SocketCore.Utils.Buffer;
 using NSL.UDP.Client;
+using NSL.Utils;
 using System;
 using System.Collections;
 using System.Collections.Concurrent;
