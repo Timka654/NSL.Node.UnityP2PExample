@@ -1,0 +1,4 @@
+[submodule "Assets/Server~"]
+	path = Assets/Server~
+	url = https://github.com/Timka654/NSL.Node.git
+	branch = master
