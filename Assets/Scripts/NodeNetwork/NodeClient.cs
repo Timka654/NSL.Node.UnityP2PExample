@@ -2,6 +2,7 @@ using Mono.Cecil.Rocks;
 using NSL.BuilderExtensions.SocketCore;
 using NSL.BuilderExtensions.UDPClient;
 using NSL.Node.BridgeServer.Shared.Enums;
+using NSL.Node.BridgeTransportClient.Shared;
 using NSL.SocketClient;
 using NSL.SocketCore;
 using NSL.SocketCore.Utils;
@@ -26,17 +27,8 @@ public enum NodeClientState
     OnlyProxy,
 }
 
-public class NodeTestClient : NodeClient
+public class NodeClient : INetworkClient, IPlayerNetwork
 {
-    public NodeTestClient(NodeConnectionInfo connectionInfo, NodeNetwork nodeNetwork, NodeTransportClient proxy) : base(connectionInfo, nodeNetwork, proxy)
-    {
-    }
-}
-
-public class NodeClient
-{
-    public delegate void ReciveHandleDelegate(NodeClient nodePlayer, InputPacketBuffer buffer);
-
     public NodeNetwork NodeNetwork { get; }
 
     public string Token => connectionInfo.Token;
@@ -53,24 +45,15 @@ public class NodeClient
 
     public event NodeClientStateChangeDelegate OnStateChanged = (nstate, ostate) => { };
 
-    private Dictionary<ushort, ReciveHandleDelegate> handles = new Dictionary<ushort, ReciveHandleDelegate>();
-
-    public void RegisterHandle(ushort code, ReciveHandleDelegate handle)
-    {
-        if (!handles.TryAdd(code, handle))
-            throw new Exception($"code {code} not contains in {nameof(handles)}");
-    }
-
-    public void UnRegisterHandle(ushort code)
-    {
-        handles.Remove(code);
-    }
+    public PlayerInfo PlayerInfo { get; private set; }
 
     public NodeClient(NodeConnectionInfo connectionInfo, NodeNetwork nodeNetwork, NodeTransportClient proxy)
     {
         this.connectionInfo = connectionInfo;
+
         NodeNetwork = nodeNetwork;
         Proxy = proxy;
+        PlayerInfo = new PlayerInfo() { Id = PlayerId, Network = this };
 
         proxy.OnTransport += Proxy_OnTransport;
     }
@@ -82,10 +65,12 @@ public class NodeClient
 
         var code = buffer.ReadUInt16();
 
-        if (!handles.TryGetValue(code, out var packet))
+        var handle = NodeNetwork.GetHandle(code);
+
+        if (handle == null)
             Debug.LogError($"{nameof(NodeClient)} Cannot find handle for code {code}");
 
-        packet(this, buffer);
+        handle(PlayerInfo, buffer);
     }
 
     public bool TryConnect(NodeConnectionInfo connectionInfo)
@@ -154,13 +139,19 @@ public class NodeClient
 
         packet.WithPid(NodeTransportPacketEnum.Transport);
 
+        Send(packet);
+    }
+
+    public void Send(OutputPacketBuffer packet, bool disposeOnSend = true)
+    {
         if (networkClient != null)
             networkClient.Send(packet, false);
 
         if (NodeNetwork.TransportMode.HasFlag(NodeTransportMode.ProxyOnly))
             Proxy.Transport(packet);
 
-        packet.Dispose();
+        if (disposeOnSend)
+            packet.Dispose();
     }
 
     private bool createUdp(string ip, int port)

@@ -7,7 +7,7 @@
   "targets": {
     ".NETStandard,Version=v2.1": {},
     ".NETStandard,Version=v2.1/": {
-      "Unity.NSL.Node.BridgeServer.Shared/2022.12.15.0422": {
+      "Unity.NSL.Node.BridgeServer.Shared/2023.02.07.1934": {
         "runtime": {
           "Unity.NSL.Node.BridgeServer.Shared.dll": {}
         }
@@ -15,7 +15,7 @@
     }
   },
   "libraries": {
-    "Unity.NSL.Node.BridgeServer.Shared/2022.12.15.0422": {
+    "Unity.NSL.Node.BridgeServer.Shared/2023.02.07.1934": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

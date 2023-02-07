@@ -3,9 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using static NodeBridgeClient;
-using static NodeLobbyNetwork;
-using static UnityEditor.Progress;
 
 public class NodeSession : NodeSession<NodeSessionOptions>
 {
@@ -19,7 +16,7 @@ public class NodeSession<TNodeOptions> : IDisposable
 
     private NodeBridgeClient bridgeClient;
 
-    List<TransportSessionInfo> connectionPoints = new List<TransportSessionInfo>();
+    List<NodeBridgeClient.TransportSessionInfo> connectionPoints = new List<NodeBridgeClient.TransportSessionInfo>();
 
     public NodeSession(TNodeOptions options)
     {

@@ -1,8 +1,11 @@
+using JetBrains.Annotations;
+using Mono.Cecil.Cil;
 using NSL.BuilderExtensions.SocketCore;
 using NSL.BuilderExtensions.SocketCore.Unity;
 using NSL.BuilderExtensions.UDPClient;
 using NSL.BuilderExtensions.UDPServer;
 using NSL.Node.BridgeServer.Shared.Enums;
+using NSL.Node.BridgeTransportClient.Shared;
 using NSL.SocketCore.Utils.Buffer;
 using NSL.SocketServer.Utils;
 using NSL.UDP.Client;
@@ -15,20 +18,18 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Unity.VisualScripting;
 using UnityEngine;
-using static NodeBridgeClient;
-using static NodeLobbyNetwork;
-
-public class NodeNetwork : MonoBehaviour
+public class NodeNetwork : MonoBehaviour, IRoomInfo
 {
     public NodeBridgeClient bridgeClient;
 
     public NodeTransportClient transportClient;
 
-    private RoomStartInfo roomStartInfo;
+    private NodeLobbyNetwork.RoomStartInfo roomStartInfo;
 
     private UDPServer<UDPNodeServerNetworkClient> endPoint;
 
@@ -76,17 +77,23 @@ public class NodeNetwork : MonoBehaviour
     /// </summary>
     public Guid LocalNodeId { get; private set; } = Guid.Empty;
 
-    internal async void Initialize(RoomStartInfo startupInfo, CancellationToken cancellationToken = default)
+    internal async void Initialize(NodeLobbyNetwork.RoomStartInfo startupInfo, CancellationToken cancellationToken = default)
         => await InitializeAsync(startupInfo, cancellationToken);
 
-    internal async Task InitializeAsync(RoomStartInfo startupInfo, CancellationToken cancellationToken = default)
+    public GameInfo GameInfo { get; private set; }
+
+
+    internal async Task InitializeAsync(NodeLobbyNetwork.RoomStartInfo startupInfo, CancellationToken cancellationToken = default)
     {
+        GameInfo = new GameInfo(this);
+
         roomStartInfo = startupInfo;
 
         OnChangeRoomState -= OnChangeState;
         OnChangeRoomState += OnChangeState;
 
         await TryConnectAsync(cancellationToken);
+
     }
 
     public bool Ready { get; private set; }
@@ -101,9 +108,9 @@ public class NodeNetwork : MonoBehaviour
 
     private async Task TryConnectAsync(CancellationToken cancellationToken = default)
     {
-#if DEBUG
-        TransportMode = NodeTransportMode.P2POnly;
-#endif
+//#if DEBUG
+//        TransportMode = NodeTransportMode.P2POnly;
+//#endif
 
         try
         {
@@ -111,7 +118,7 @@ public class NodeNetwork : MonoBehaviour
 
             bridgeClient = new NodeBridgeClient(roomStartInfo.ConnectionEndPoints);
 
-            List<TransportSessionInfo> connectionPoints = new List<TransportSessionInfo>();
+            List<NodeBridgeClient.TransportSessionInfo> connectionPoints = new List<NodeBridgeClient.TransportSessionInfo>();
 
             bridgeClient.OnAvailableBridgeServersResult = (result, instance, from, servers) =>
             {
@@ -147,7 +154,7 @@ public class NodeNetwork : MonoBehaviour
         }
     }
 
-    private async Task WaitBridgeAsync(List<TransportSessionInfo> connectionPoints, CancellationToken cancellationToken = default)
+    private async Task WaitBridgeAsync(List<NodeBridgeClient.TransportSessionInfo> connectionPoints, CancellationToken cancellationToken = default)
     {
         OnChangeRoomState(RoomStateEnum.WaitTransportServerList);
 
@@ -195,7 +202,7 @@ public class NodeNetwork : MonoBehaviour
             endPointConnectionUrl = default;
     }
 
-    private void InitializeTransportClients(List<TransportSessionInfo> connectionPoints, CancellationToken cancellationToken = default)
+    private void InitializeTransportClients(List<NodeBridgeClient.TransportSessionInfo> connectionPoints, CancellationToken cancellationToken = default)
     {
         OnChangeRoomState(RoomStateEnum.ConnectionTransportServers);
 
@@ -233,7 +240,6 @@ public class NodeNetwork : MonoBehaviour
 
                 if (nodeClient.State == NodeClientState.None)
                 {
-                    nodeClient.RegisterHandle(11, (node, buffer) => { Debug.Log($"receive {buffer.ReadFloat()} from {node.PlayerId}"); });
 
                     if (!nodeClient.TryConnect(item))
                         throw new Exception($"Cannot connect");
@@ -318,13 +324,93 @@ public class NodeNetwork : MonoBehaviour
 
         return false;
     }
-    
+
     public bool SendTo(Guid nodeId, Action<OutputPacketBuffer> builder, ushort code)
     {
         if (connectedClients.TryGetValue(nodeId, out var node))
             SendTo(node, builder, code);
 
         return false;
+    }
+
+    #endregion
+
+
+    #region Execute
+
+
+    public void Execute(ushort command, Action<OutputPacketBuffer> build)
+    {
+        var packet = new OutputPacketBuffer();
+
+        packet.WriteUInt16(command);
+
+        build(packet);
+
+        packet.WithPid(NodeTransportPacketEnum.Execute);
+
+        SendToGameServer(packet);
+    }
+
+    public void SendToGameServer(OutputPacketBuffer packet)
+    {
+        transportClient.Transport(packet);
+    }
+
+    #endregion
+
+
+    #region Handle
+
+
+    private Dictionary<ushort, ReciveHandleDelegate> handles = new Dictionary<ushort, ReciveHandleDelegate>();
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void RegisterHandle(ushort code, ReciveHandleDelegate handle)
+    {
+        if (!handles.TryAdd(code, handle))
+            throw new Exception($"code {code} already contains in {nameof(handles)}");
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public ReciveHandleDelegate GetHandle(ushort code)
+    {
+        if (handles.TryGetValue(code, out var handle))
+            return handle;
+
+        return null;
+    }
+
+    #endregion
+
+
+    #region IRoomInfo
+
+    public void Broadcast(OutputPacketBuffer packet)
+    {
+        Parallel.ForEach(connectedClients, c => { c.Value.Send(packet, false); });
+
+        packet.Dispose();
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public PlayerInfo GetPlayer(Guid id)
+    {
+        if (connectedClients.TryGetValue(id, out var node))
+            return node.PlayerInfo;
+
+        return null;
+    }
+
+    public void SendTo(Guid nodeId, OutputPacketBuffer packet)
+    {
+        if (connectedClients.TryGetValue(nodeId, out var node))
+            SendTo(node.PlayerInfo, packet);
+    }
+
+    public void SendTo(PlayerInfo player, OutputPacketBuffer packet, bool disposeOnSend = true)
+    {
+        player.Network.Send(packet, disposeOnSend);
     }
 
     #endregion
@@ -343,6 +429,7 @@ public class NodeNetwork : MonoBehaviour
             }, 11);
         }
     }
+
 #endif
 }
 

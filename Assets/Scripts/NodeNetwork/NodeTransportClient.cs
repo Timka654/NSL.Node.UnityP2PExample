@@ -13,18 +13,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Unity.VisualScripting;
 using UnityEngine;
-//todo: replace for library
-public enum NodeTransportPacketEnum
-{
-    SignSession = 1,
-    SignSessionResult = SignSession,
-    ChangeNodeList,
-    Transport,
-    Broadcast,
-    ReadyNodePID,
-    ReadyNodeResultPID = ReadyNodePID,
-    ReadyRoom
-}
+
 public class NodeTransportClient
 {
     public delegate void OnReceiveSignSessionResultDelegate(bool result, NodeTransportClient instance, Uri from);
@@ -60,7 +49,7 @@ public class NodeTransportClient
 
     public async Task<bool> SendReady(int totalCount, IEnumerable<Guid> readyNodes)
     {
-        var p = WaitablePacketBuffer.Create(NodeTransportPacketEnum.ReadyNodePID);
+        var p = WaitablePacketBuffer.Create(NodeTransportPacketEnum.ReadyNode);
 
         p.WriteInt32(totalCount);
         p.WriteCollection(readyNodes, i => p.WriteGuid(i));
@@ -130,7 +119,7 @@ public class NodeTransportClient
                     builder.AddPacketHandle(NodeTransportPacketEnum.SignSessionResult, OnSignSessionReceive);
                     builder.AddPacketHandle(NodeTransportPacketEnum.ChangeNodeList, OnChangeNodeListReceive);
                     builder.AddPacketHandle(NodeTransportPacketEnum.Transport, OnTransportReceive);
-                    builder.AddReceivePacketHandle(NodeTransportPacketEnum.ReadyNodeResultPID, c => c.PacketWaitBuffer);
+                    builder.AddReceivePacketHandle(NodeTransportPacketEnum.ReadyNodeResult, c => c.PacketWaitBuffer);
                     builder.AddPacketHandle(NodeTransportPacketEnum.ReadyRoom, OnRoomReadyReceive);
                 })
                 .WithUrl(uri)
