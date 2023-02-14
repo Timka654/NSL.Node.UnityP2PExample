@@ -5,3 +5,5 @@
 /.vs
 *.csproj
 /build/
+output~/
+obj/

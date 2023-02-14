@@ -4,6 +4,7 @@ using NSL.BuilderExtensions.UDPClient;
 using NSL.BuilderExtensions.UDPServer;
 using NSL.Node.BridgeServer.Shared.Enums;
 using NSL.Node.RoomServer.Shared;
+using NSL.Node.RoomServer.Shared.Client.Core;
 using NSL.SocketCore.Utils.Buffer;
 using NSL.SocketServer.Utils;
 using NSL.UDP.Client;

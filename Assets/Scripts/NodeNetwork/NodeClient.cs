@@ -2,6 +2,7 @@ using NSL.BuilderExtensions.SocketCore;
 using NSL.BuilderExtensions.UDPClient;
 using NSL.Node.BridgeServer.Shared.Enums;
 using NSL.Node.RoomServer.Shared;
+using NSL.Node.RoomServer.Shared.Client.Core;
 using NSL.SocketClient;
 using NSL.SocketCore;
 using NSL.SocketCore.Utils;
