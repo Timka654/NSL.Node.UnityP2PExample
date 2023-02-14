@@ -10,3 +10,7 @@
 	path = Assets/Scripts/Network/NodeRoomPlugin
 	url = https://github.com/Timka654/NSL.Node.Unity.git
 	branch = main
+[submodule "Assets/Plugins/NUUVer3"]
+	path = Assets/Plugins/NUUVer3
+	url = https://github.com/Timka654/NUUVer3.git
+	branch = main
