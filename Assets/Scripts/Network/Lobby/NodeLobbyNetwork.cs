@@ -3,19 +3,14 @@ using NSL.BuilderExtensions.SocketCore.Unity;
 using NSL.BuilderExtensions.WebSocketsClient;
 using NSL.Node.LobbyServerExample.Shared.Enums;
 using NSL.SocketClient;
-using NSL.SocketClient.Utils;
-using NSL.SocketCore.Utils;
 using NSL.SocketCore.Extensions.Buffer;
 using NSL.SocketCore.Utils.Buffer;
 using NSL.WebSockets.Client;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.EventSystems;
-using UnityEngine.Rendering;
 
 public class NodeLobbyNetwork
 {
