@@ -1,7 +1,3 @@
-[submodule "Assets/Scripts/Network/Node"]
-	path = Assets/Scripts/Network/Node
-	url = https://github.com/Timka654/NSL.Node.RoomSharedFiles.git
-	branch = main
 [submodule "GameServer"]
 	path = GameServer
 	url = https://github.com/Timka654/NSL.Node.git
