@@ -2,9 +2,9 @@ using NSL.BuilderExtensions.SocketCore;
 using NSL.BuilderExtensions.SocketCore.Unity;
 using NSL.BuilderExtensions.UDPClient;
 using NSL.BuilderExtensions.UDPServer;
-using NSL.Node.BridgeServer.Shared.Enums;
 using NSL.Node.RoomServer.Shared;
 using NSL.Node.RoomServer.Shared.Client.Core;
+using NSL.Node.RoomServer.Shared.Client.Core.Enums;
 using NSL.SocketCore.Utils.Buffer;
 using NSL.SocketServer.Utils;
 using NSL.UDP.Client;
@@ -346,7 +346,7 @@ public class NodeNetwork : MonoBehaviour, IRoomInfo
 
         build(packet);
 
-        packet.WithPid(NodeTransportPacketEnum.Execute);
+        packet.WithPid(RoomPacketEnum.Execute);
 
         SendToGameServer(packet);
     }

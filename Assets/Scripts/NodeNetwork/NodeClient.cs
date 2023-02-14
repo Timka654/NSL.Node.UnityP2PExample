@@ -3,6 +3,7 @@ using NSL.BuilderExtensions.UDPClient;
 using NSL.Node.BridgeServer.Shared.Enums;
 using NSL.Node.RoomServer.Shared;
 using NSL.Node.RoomServer.Shared.Client.Core;
+using NSL.Node.RoomServer.Shared.Client.Core.Enums;
 using NSL.SocketClient;
 using NSL.SocketCore;
 using NSL.SocketCore.Utils;
@@ -137,7 +138,7 @@ public class NodeClient : INetworkClient, IPlayerNetwork
 
         build(packet);
 
-        packet.WithPid(NodeTransportPacketEnum.Transport);
+        packet.WithPid(RoomPacketEnum.Transport);
 
         Send(packet);
     }

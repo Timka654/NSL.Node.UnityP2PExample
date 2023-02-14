@@ -2,3 +2,7 @@
 	path = GameServer
 	url = https://github.com/Timka654/NSL.Node.git
 	branch = master
+[submodule "Assets/Scripts/Network/Node/Core"]
+	path = Assets/Scripts/Network/Node/Core
+	url = https://github.com/Timka654/NSL.Node.RoomSharedFiles.git
+	branch = main
