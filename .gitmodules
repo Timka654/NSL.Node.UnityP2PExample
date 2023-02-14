@@ -6,3 +6,7 @@
 	path = Assets/Scripts/Network/Node/Core
 	url = https://github.com/Timka654/NSL.Node.RoomSharedFiles.git
 	branch = main
+[submodule "Assets/Scripts/Network/NodeRoomPlugin"]
+	path = Assets/Scripts/Network/NodeRoomPlugin
+	url = https://github.com/Timka654/NSL.Node.Unity.git
+	branch = main
