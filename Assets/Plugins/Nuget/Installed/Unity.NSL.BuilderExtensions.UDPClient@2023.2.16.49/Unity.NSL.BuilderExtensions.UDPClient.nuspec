@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+  <metadata>
+    <id>Unity.NSL.BuilderExtensions.UDPClient</id>
+    <version>2023.2.16.49</version>
+    <authors>Relife87</authors>
+    <description>Package Description</description>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <dependencies>
+      <group targetFramework=".NETStandard2.1">
+        <dependency id="Unity.NSL.EndPointBuilder" version="2023.2.16.49" exclude="Build,Analyzers" />
+        <dependency id="Unity.NSL.SocketClient" version="2023.2.16.49" exclude="Build,Analyzers" />
+        <dependency id="Unity.NSL.SocketCore" version="2023.2.16.49" exclude="Build,Analyzers" />
+        <dependency id="Unity.NSL.BuilderExtensions.UDP" version="2023.2.16.49" exclude="Build,Analyzers" />
+        <dependency id="Unity.NSL.UDP.Client" version="2023.2.16.49" exclude="Build,Analyzers" />
+        <dependency id="Unity.NSL.UDP" version="2023.2.16.49" exclude="Build,Analyzers" />
+      </group>
+    </dependencies>
+  </metadata>
+</package>

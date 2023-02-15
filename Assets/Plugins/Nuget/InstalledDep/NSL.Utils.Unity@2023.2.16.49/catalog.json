@@ -1,0 +1,51 @@
+{
+  "InstalledVersionCatalog": {
+    "@id": null,
+    "Authors": "Relife87",
+    "DependencyGroups": [
+      {
+        "@id": null,
+        "TargetFramework": ".NETStandard2.0",
+        "Dependencies": []
+      }
+    ],
+    "Description": "Package Description",
+    "IconUrl": null,
+    "Id": "NSL.Utils.Unity",
+    "Launguage": null,
+    "LicenseUrl": null,
+    "Listed": true,
+    "MinClientVersion": null,
+    "packageContent": "https://nuget.twicepricegroup.com/api/Package/fdc0f390-ac03-4981-9208-a4241196ea2c-1aa7e63b-7a53-4e6c-8b47-99bcc56a1a1b-ff706b44-7248-45d9-8de5-736437532bbd/v3-flatcontainer/NSL.Utils.Unity/2023.2.16.49/NSL.Utils.Unity.2023.2.16.49.nupkg",
+    "ProjectUrl": null,
+    "Published": "2023-02-15T23:04:01.786162Z",
+    "RequireLicenseAcceptance": false,
+    "Summary": null,
+    "Tags": [
+      ""
+    ],
+    "Title": null,
+    "Version": "2023.2.16.49",
+    "Vulnerabilities": null
+  },
+  "SelectedFrameworkDeps": {
+    "@id": null,
+    "TargetFramework": ".NETStandard2.0",
+    "Dependencies": []
+  },
+  "SelectedVersion": {
+    "Version": "2023.2.16.49",
+    "IsLegacyVersion": true,
+    "Revision": 49,
+    "IsSemVer2": false,
+    "OriginalVersion": "2023.2.16.49",
+    "Major": 2023,
+    "Minor": 2,
+    "Patch": 16,
+    "ReleaseLabels": [],
+    "Release": "",
+    "IsPrerelease": false,
+    "HasMetadata": false,
+    "Metadata": ""
+  }
+}
