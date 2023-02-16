@@ -12,7 +12,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
 
-public class NodeLobbyNetwork
+public class NodeLobbyClient
 {
     WSNetworkClient<LobbyNetworkClient, WSClientOptions<LobbyNetworkClient>> client;
 
@@ -20,12 +20,12 @@ public class NodeLobbyNetwork
 
     public Guid GetClientUID() => lobbyNetworkClient?.UID ?? Guid.Empty;
 
-    public NodeLobbyNetwork(string url) : this(new Uri(url))
+    public NodeLobbyClient(string url) : this(new Uri(url))
     {
 
     }
 
-    public NodeLobbyNetwork(Uri url)
+    public NodeLobbyClient(Uri url)
     {
         client = WebSocketsClientEndPointBuilder.Create()
             .WithClientProcessor<LobbyNetworkClient>()
@@ -33,19 +33,14 @@ public class NodeLobbyNetwork
             .WithUrl(url)
             .WithCode(builder =>
             {
-                //builder.AddConnectHandleForUnity(client =>
-                //{
-                //    Debug.Log($"[Client] Success connected");
-                //});
-
                 builder.AddSendHandleForUnity((client, pid, len, stack) =>
                 {
-                    Debug.Log($"Send {pid} to lobby client");
+                    Debug.Log($"[Lobby Server] Send {pid}");
                 });
 
                 builder.AddReceiveHandleForUnity((client, pid, len) =>
                 {
-                    Debug.Log($"Receive {pid} from lobby client");
+                    Debug.Log($"[Lobby Server] Receive {pid}");
                 });
 
                 builder.AddConnectHandle(client =>

@@ -1,7 +1,7 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using static NodeLobbyNetwork;
+using static NodeLobbyClient;
 
 public class LobbyListItem : MonoBehaviour
 {

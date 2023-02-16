@@ -5,7 +5,7 @@ public class MemberItem : MonoBehaviour
 {
     [SerializeField]private TMP_Text text;
 
-    public void Set(NodeLobbyNetwork.RoomJoinMemberMessageInfo data)
+    public void Set(NodeLobbyClient.RoomJoinMemberMessageInfo data)
     {
         Set(data.UserId.ToString());
     }
