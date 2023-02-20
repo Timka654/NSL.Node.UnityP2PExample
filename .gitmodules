@@ -14,3 +14,11 @@
 	path = Assets/Plugins/NUUVer3
 	url = https://github.com/Timka654/NUUVer3.git
 	branch = main
+[submodule "LobbyServer/NSL.Node.PVPLobbyExample"]
+	path = LobbyServer/NSL.Node.PVPLobbyExample
+	url = https://github.com/Timka654/NSL.Node.PVPLobbyExample.git
+	branch = main
+[submodule "LobbyServer/NSL.Node.RoomLobbyExample"]
+	path = LobbyServer/NSL.Node.RoomLobbyExample
+	url = https://github.com/Timka654/NSL.Node.RoomLobbyExample.git
+	branch = main
