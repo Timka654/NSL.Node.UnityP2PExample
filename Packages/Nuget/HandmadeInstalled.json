@@ -1,7 +1,7 @@
 [
   {
     "Package": "Newtonsoft.Json",
-    "Version": "13.0.1",
+    "Version": "13.0.2",
     "TargetFramework": ".NETStandard2.0"
   }
 ]

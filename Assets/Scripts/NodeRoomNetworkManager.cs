@@ -14,13 +14,13 @@ public class NodeRoomNetworkManager : MonoBehaviour
     [SerializeField] private CreateRoomScreen CreateRoomScreen;
     [SerializeField] private ListRoomScreen ListRoomScreen;
 
-    private NodeLobbyClient lobby;
+    private NodeRoomLobbyClient lobby;
 
-    public NodeLobbyClient GetNetwork() => lobby;
+    public NodeRoomLobbyClient GetNetwork() => lobby;
 
     protected virtual void Awake()
     {
-        lobby = new NodeLobbyClient(lobbyUrl);
+        lobby = new NodeRoomLobbyClient(lobbyUrl);
     }
 
     public async Task<bool> ConnectToLobby()

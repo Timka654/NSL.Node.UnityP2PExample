@@ -25,7 +25,7 @@ public class RoomInfoScreen : MonoBehaviour
 
     public LobbyRoomModel CurrentRoom => roomNetworkManager.CurrentRoom;
 
-    private NodeLobbyClient network => roomNetworkManager.GetNetwork();
+    private NodeRoomLobbyClient network => roomNetworkManager.GetNetwork();
 
     public void InitRoom()
     {
@@ -80,7 +80,7 @@ public class RoomInfoScreen : MonoBehaviour
             Destroy(go);
     }
 
-    private void Network_OnRoomJoinMemberMessage(NodeLobbyClient.RoomJoinMemberMessageInfo obj)
+    private void Network_OnRoomJoinMemberMessage(RoomJoinMemberMessageInfo obj)
     {
         joinMember(obj.UserId, obj.UserId.ToString());
     }
@@ -93,14 +93,14 @@ public class RoomInfoScreen : MonoBehaviour
         members.TryAdd(uid, member);
     }
 
-    private void Network_OnRoomChatMessage(NodeLobbyClient.RoomChatMessageInfo obj)
+    private void Network_OnRoomChatMessage(RoomChatMessageInfo obj)
     {
         var member = GameObject.Instantiate(chatMessagePrefab, chatLayout.gameObject.transform);
 
         member.GetComponent<TMP_Text>().text = $"{obj.From} - {obj.Content}";
     }
 
-    private void Network_OnRoomStartedMessage(NodeLobbyClient.RoomStartInfo startupInfo)
+    private void Network_OnRoomStartedMessage(RoomStartInfo startupInfo)
     {
         SceneManager.LoadSceneAsync(gameSceneName).completed += _ =>
         {

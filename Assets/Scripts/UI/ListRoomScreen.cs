@@ -11,7 +11,7 @@ public class ListRoomScreen : MonoBehaviour
 
     private List<ListRoomInfoModel> rooms;
 
-    private NodeLobbyClient network => roomNetworkManager.GetNetwork();
+    private NodeRoomLobbyClient network => roomNetworkManager.GetNetwork();
 
     private void Start()
     {
@@ -28,7 +28,7 @@ public class ListRoomScreen : MonoBehaviour
         network.OnLobbyChangeTitleRoomInfoMessage += RoomNetworkManager_OnLobbyChangeTitleRoomInfoMessage;
     }
 
-    private void RoomNetworkManager_OnLobbyChangeTitleRoomInfoMessage(NodeLobbyClient.ChangeTitleRoomInfo obj)
+    private void RoomNetworkManager_OnLobbyChangeTitleRoomInfoMessage(ChangeTitleRoomInfo obj)
     {
         var room = rooms.Find(x => x.Room.Id.Equals(obj));
 
