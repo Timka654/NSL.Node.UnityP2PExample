@@ -107,7 +107,7 @@ public class RoomInfoScreen : MonoBehaviour
             try
             {
 
-                var obj = FindObjectsOfType<NodeNetwork>().SingleOrDefault();
+                var obj = FindObjectsOfType<UnityNodeRoom>().SingleOrDefault();
 
                 obj.Initialize(startupInfo);
             }

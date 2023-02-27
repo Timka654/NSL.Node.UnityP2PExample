@@ -165,11 +165,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 237288159}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 58c33d3bf20b80844af5269f66d50c5a, type: 3}
+  m_Script: {fileID: 11500000, guid: a0d7e066acad70848ae8f06d28eeac7c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  TransportMode: 2
   MaxNodesWaitCycle: 10
-  WaitBridgeDelayMS: 3000
+  WaitBridgeDelayMS: 10000
+  DebugPacketIO: 1
 --- !u!114 &237288163
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class GameRoomPlayer : MonoBehaviour
 {
-    public NodeNetwork NodeNetworkRoom;
+    public UnityNodeRoom NodeNetworkRoom;
 
     public NodeClient NodeNetworkPlayer;
 
@@ -32,7 +32,7 @@ public class GameRoomPlayer : MonoBehaviour
     private void MoveCommand(KeyCode code, float elapsed)
     {
         if (NodeNetworkPlayer.IsLocalNode) // is localPlayer
-            NodeNetworkRoom.Broadcast(p =>
+            NodeNetworkRoom.NodeNetwork.Broadcast(p =>
             {
                 p.WriteInt16((short)code);
                 p.WriteFloat(elapsed);

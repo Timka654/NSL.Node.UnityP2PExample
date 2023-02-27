@@ -1,18 +1,8 @@
 ﻿using NSL.SocketCore.Utils.Buffer;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 
-public class RoomStartInfo
+public class RoomStartInfo : NodeSessionStartupModel
 {
-    public string Token { get; set; }
-
-    public Guid RoomId { get; set; }
-
-    public string ServerIdentity { get; set; }
-
-    public List<string> ConnectionEndPoints { get; set; }
-
     public int TotalPlayerCount { get; set; }
 
     internal static RoomStartInfo Read(InputPacketBuffer data)
