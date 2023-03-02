@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class WelcomeScreen : MonoBehaviour
+public class RoomsWelcomeScreen : MonoBehaviour
 {
     [SerializeField] private NodeRoomNetworkManager roomNetworkManager;
 

@@ -9,7 +9,7 @@ using System;
 using System.Threading.Tasks;
 using UnityEngine;
 
-public partial class NodeRoomLobbyClient
+public partial class NodePVPLobbyClient
 {
     WSNetworkClient<RoomLobbyNetworkClient, WSClientOptions<RoomLobbyNetworkClient>> client;
 
@@ -17,12 +17,12 @@ public partial class NodeRoomLobbyClient
 
     public Guid GetClientUID() => lobbyNetworkClient?.UID ?? Guid.Empty;
 
-    public NodeRoomLobbyClient(string url) : this(new Uri(url))
+    public NodePVPLobbyClient(string url) : this(new Uri(url))
     {
 
     }
 
-    public NodeRoomLobbyClient(Uri url)
+    public NodePVPLobbyClient(Uri url)
     {
         client = WebSocketsClientEndPointBuilder.Create()
             .WithClientProcessor<RoomLobbyNetworkClient>()
@@ -57,18 +57,7 @@ public partial class NodeRoomLobbyClient
                     Debug.LogError(ex.ToString());
                 });
 
-                builder.AddPacketHandle(ClientReceivePacketEnum.NewUserIdentity, (client, data) => { client.UID = data.ReadGuid(); Debug.Log($"New UID = {client.UID}"); });
-
-                builder.AddReceivePacketHandle(ClientReceivePacketEnum.Response, client => client.waitBuffer);
-
-                builder.AddPacketHandle(ClientReceivePacketEnum.NewRoomMessage, (client, data) => OnLobbyNewRoomMessage(data.ReadJson16<LobbyRoomModel>()));
-                builder.AddPacketHandle(ClientReceivePacketEnum.RoomRemoveMessage, (client, data) => OnLobbyRemoveRoomMessage(data.ReadGuid()));
-                builder.AddPacketHandle(ClientReceivePacketEnum.ChangeTitleRoomInfoMessage, (client, data) => OnLobbyChangeTitleRoomInfoMessage(ChangeTitleRoomInfo.Read(data)));
-
-                builder.AddPacketHandle(ClientReceivePacketEnum.RoomStartedMessage, (client, data) => OnRoomStartedMessage(RoomStartInfo.Read(data)));
-                builder.AddPacketHandle(ClientReceivePacketEnum.ChatMessage, (client, data) => OnRoomChatMessage(RoomChatMessageInfo.Read(data)));
-                builder.AddPacketHandle(ClientReceivePacketEnum.RoomMemberJoinMessage, (client, data) => OnRoomJoinMemberMessage(RoomJoinMemberMessageInfo.Read(data)));
-                builder.AddPacketHandle(ClientReceivePacketEnum.RoomMemberLeaveMessage, (client, data) => OnRoomLeaveMemberMessage(data.ReadGuid()));
+                builder.AddPacketHandle(LobbyPacketEnum.StartupRoomInfo, (client, data) => OnRoomStartedMessage(RoomStartInfo.Read(data)));
 
             })
             .Build();
@@ -78,21 +67,9 @@ public partial class NodeRoomLobbyClient
 
     public Guid ClientUID => lobbyNetworkClient?.UID ?? default;
 
-    public Action<bool> OnStateChange = (state) => { };
-
-    public event Action<LobbyRoomModel> OnLobbyNewRoomMessage = (roomInfo) => { };
-
-    public event Action<ChangeTitleRoomInfo> OnLobbyChangeTitleRoomInfoMessage = (roomInfo) => { };
-
-    public event Action<Guid> OnLobbyRemoveRoomMessage = (roomId) => { };
+    public event Action<bool> OnStateChange = (state) => { };
 
     public event Action<RoomStartInfo> OnRoomStartedMessage = data => { };
-
-    public event Action<RoomChatMessageInfo> OnRoomChatMessage = data => { };
-
-    public event Action<RoomJoinMemberMessageInfo> OnRoomJoinMemberMessage = data => { };
-
-    public event Action<Guid> OnRoomLeaveMemberMessage = data => { };
 
     #region Connect
 
