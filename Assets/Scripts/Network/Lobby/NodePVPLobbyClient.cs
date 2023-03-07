@@ -86,6 +86,12 @@ public partial class NodePVPLobbyClient
 
     #region Send
 
+    public void SendFindOpponent()
+        => Send(OutputPacketBuffer.Create(LobbyPacketEnum.FindOpponent));
+
+    public void SendCancelSearch()
+        =>Send(OutputPacketBuffer.Create(LobbyPacketEnum.CancelSearch));
+
     public bool Send(OutputPacketBuffer buffer, bool disposeOnSend = true)
     {
         if (lobbyNetworkClient?.GetState(true) != true)

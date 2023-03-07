@@ -54,13 +54,13 @@ public class NodePVPNetworkManager : MonoBehaviour
         if (!await ConnectToLobby())
             return;
 
-        lobby.Send(OutputPacketBuffer.Create(LobbyPacketEnum.FindOpponent));
+        lobby.SendFindOpponent();
         ChangeSearchProcess(true);
     }
 
     public void CancelSearch()
     {
-        lobby.Send(OutputPacketBuffer.Create(LobbyPacketEnum.CancelSearch));
+        lobby.SendCancelSearch();
         ChangeSearchProcess(false);
     }
 
