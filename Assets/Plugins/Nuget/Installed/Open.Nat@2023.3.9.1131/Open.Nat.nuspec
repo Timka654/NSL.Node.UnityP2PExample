@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+  <metadata>
+    <id>Open.Nat</id>
+    <version>2023.3.9.1131</version>
+    <authors>Relife87</authors>
+    <description>.NET Library for automatic network address translation. Original Authors Alan McGovern, Ben Motmans, Lucas Ontivero, this only for NSL collection clear package implementation</description>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <tags>Networking</tags>
+    <copyright>Copyright Alan McGovern, Ben Motmans, Lucas Ontivero ©  2006-2014</copyright>
+    <dependencies>
+      <group targetFramework=".NETStandard2.1" />
+    </dependencies>
+  </metadata>
+</package>
