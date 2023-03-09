@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+  <metadata>
+    <id>Unity.NSL.WebSockets.Server</id>
+    <version>2023.3.9.1131</version>
+    <authors>Relife87</authors>
+    <description>Package Description</description>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <dependencies>
+      <group targetFramework=".NETStandard2.0">
+        <dependency id="Unity.NSL.SocketServer" version="2023.3.9.1131" exclude="Build,Analyzers" />
+        <dependency id="Unity.NSL.WebSockets" version="2023.3.9.1131" exclude="Build,Analyzers" />
+      </group>
+    </dependencies>
+  </metadata>
+</package>
